@@ -4,7 +4,9 @@ module.exports = {
     'es6': true,
   },
   'extends': [
-    'google',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended'
   ],
   'plugins': [
     '@typescript-eslint',
@@ -19,7 +21,7 @@ module.exports = {
     'sourceType': 'module',
   },
   'rules': {
-    'require-jsdoc': 'off',
-    '@typescript-eslint/no-unused-vars': 'error'
+    '@typescript-eslint/require-jsdoc': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', {'args': 'none'}]
   },
 };
