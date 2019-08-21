@@ -23,7 +23,7 @@ functions:
           method: get
           path: hello
   get-last-10-matches:
-    handler: src/get-last-10-matches/getMatchHandler.getLast10Matches
+    handler: src/get-last-10-matches/getLast10Matches.getLast10Matches
     events:
       - http:
           method: get

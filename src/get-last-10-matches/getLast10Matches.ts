@@ -1,16 +1,8 @@
-import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyHandler } from 'aws-lambda';
 import { kayn } from '../intializeKayn';
 import { MatchV4MatchDTO } from 'kayn/typings/dtos';
+import { makeErrorResponse } from '../responseBuilder';
 
-
-function makeErrorResponse(statusCode: number, message: string): APIGatewayProxyResult {
-  return {
-    statusCode: statusCode,
-    body: JSON.stringify({
-      message: message
-    })
-  };
-}
 
 export async function getMatchesFromGameIdsPromiseAll(gameIds: number[]): Promise<MatchV4MatchDTO[]> {
   const results = Promise.all(gameIds.map(async gameIds => {
