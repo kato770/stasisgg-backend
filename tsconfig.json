@@ -7,7 +7,11 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es2017",
-    "outDir": "lib"
+    "outDir": "lib",
+    "resolveJsonModule": true,
+    "types": ["jest", "node"]
   },
-  "exclude": ["node_modules"]
+  "include": [
+    "node_modules/@types/"
+  ],
 }

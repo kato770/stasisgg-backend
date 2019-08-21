@@ -2,6 +2,7 @@ module.exports = {
   'env': {
     'browser': true,
     'es6': true,
+    'node': true,
   },
   'extends': [
     'eslint:recommended',
@@ -20,8 +21,17 @@ module.exports = {
     'ecmaVersion': 2018,
     'sourceType': 'module',
   },
+  'overrides': [
+    {
+      'files': ['*.js'],
+      'rules': {
+        '@typescript-eslint/no-var-requires': 'off'
+      }
+    }
+  ],
   'rules': {
     '@typescript-eslint/require-jsdoc': 'off',
-    '@typescript-eslint/no-unused-vars': ['error', {'args': 'none'}]
+    '@typescript-eslint/no-unused-vars': ['error', { 'args': 'none' }],
+    '@typescript-eslint/semi': 'error',
   },
 };
