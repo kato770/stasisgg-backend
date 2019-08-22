@@ -1,4 +1,4 @@
-import { getMatchesFromGameIdsPromiseAll } from '../src/get-last-10-matches/getMatchHandler';
+import { getMatchesFromGameIdsPromiseAll } from '../get-last-10-matches/getLast10Matches';
 import * as data from './177026851.json';
 
 describe('getMatchHandler test', () => {
