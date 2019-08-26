@@ -1,9 +1,9 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '../intializeKayn';
 import { makeErrorResponse } from '../responseBuilder';
 
 
-export const getOneMatch: APIGatewayProxyHandler = async (event, _context) => {
+export const getOneMatch = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   if (event.queryStringParameters === null || event.queryStringParameters.gameId === undefined) {
     return makeErrorResponse(400, 'gameId parameter is required.');
   }
