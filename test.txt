@@ -1,0 +1,10 @@
+{
+  "awsRequestId": "offline_awsRequestId_cjzskizxi0005chok4cqob0ql",
+  "clientContext": {},
+  "functionName": "stasisgg-backend-dev-get-one-match",
+  "functionVersion": "offline_functionVersion_for_stasisgg-backend-dev-get-one-match",
+  "identity": {},
+  "invokedFunctionArn": "offline_invokedFunctionArn_for_stasisgg-backend-dev-get-one-match",
+  "logGroupName": "offline_logGroupName_for_stasisgg-backend-dev-get-one-match",
+  "logStreamName": "offline_logStreamName_for_stasisgg-backend-dev-get-one-match"
+}

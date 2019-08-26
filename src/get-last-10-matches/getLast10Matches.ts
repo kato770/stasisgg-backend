@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '../intializeKayn';
 import { MatchV4MatchDTO } from 'kayn/typings/dtos';
 import { makeErrorResponse } from '../responseBuilder';
@@ -12,13 +12,14 @@ export async function getMatchesFromGameIdsPromiseAll(gameIds: number[]): Promis
   return results;
 }
 
-export const getLast10Matches: APIGatewayProxyHandler = async (event, _context) => {
-  if (event.queryStringParameters === null || event.queryStringParameters.name === null) {
+export const getLast10Matches = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  if (event.queryStringParameters === null || event.queryStringParameters.name === "") {
     return makeErrorResponse(400, 'name parameter is required.');
   }
 
   const name = event.queryStringParameters.name;
   const { accountId } = await kayn.Summoner.by.name(name);
+  console.log(`name: ${name}\naccountId: ${accountId}`);
   if (accountId === undefined) {
     return makeErrorResponse(404, `Summoner Name: ${name} was not found.`);
   }
