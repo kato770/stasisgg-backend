@@ -1,8 +1,8 @@
 require('dotenv').config();
 import { Kayn, REGIONS } from 'kayn';
 
-
-export const kayn = Kayn(process.env.RIOT_LOL_API_KEY)({
+const RIOT_LOL_API_KEY = process.env.RIOT_LOL_API_KEY || 'dummyAPIKey';
+export const kayn = Kayn(RIOT_LOL_API_KEY)({
   region: REGIONS.JAPAN,
   debugOptions: {
     isEnabled: true,
