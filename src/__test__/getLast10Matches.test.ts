@@ -18,13 +18,16 @@ describe('get-last-10-matches', () => {
   it('without any queries', async () => {
     eventMock.queryStringParameters = null;
     const result = await lambda.getLast10Matches(eventMock);
+    console.log(result);
     expect(result.statusCode).toBe(400);
   });
+
   it('with empty name parameter', async () => {
     eventMock.queryStringParameters = {
       "name": ""
     };
     const result = await lambda.getLast10Matches(eventMock);
+    console.log(result);
     expect(result.statusCode).toBe(400);
   });
 
