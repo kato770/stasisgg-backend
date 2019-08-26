@@ -7,7 +7,7 @@ jest.mock('../intializeKayn');
 
 describe('get-one-match', () => {
   it('without any queries', async () => {
-    eventMock.queryStringParameters = null;
+    eventMock.queryStringParameters = {};
     const result = await lambda.getOneMatch(eventMock);
     console.log(result);
     expect(result.statusCode).toBe(400);

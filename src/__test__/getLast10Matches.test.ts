@@ -17,7 +17,7 @@ jest.mock('../intializeKayn');
 
 describe('get-last-10-matches', () => {
   it('without any queries', async () => {
-    eventMock.queryStringParameters = null;
+    eventMock.queryStringParameters = {};
     const result = await lambda.getLast10Matches(eventMock);
     console.log(result);
     expect(result.statusCode).toBe(400);

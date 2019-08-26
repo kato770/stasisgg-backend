@@ -13,7 +13,7 @@ export async function getMatchesFromGameIdsPromiseAll(gameIds: number[]): Promis
 }
 
 export const getLast10Matches = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  if (event.queryStringParameters === null || event.queryStringParameters.name === "") {
+  if (event.queryStringParameters === null || !event.queryStringParameters.name) {
     return makeErrorResponse(400, 'name parameter is required.');
   }
 

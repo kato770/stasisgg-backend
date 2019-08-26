@@ -4,7 +4,7 @@ import { makeErrorResponse } from '../responseBuilder';
 
 
 export const getOneMatch = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  if (event.queryStringParameters === null || event.queryStringParameters.gameId === "") {
+  if (event.queryStringParameters === null || !event.queryStringParameters.gameId) {
     return makeErrorResponse(400, 'gameId parameter is required.');
   }
   const gameId = +event.queryStringParameters.gameId;
