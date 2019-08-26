@@ -4,12 +4,12 @@ import { makeErrorResponse } from '../responseBuilder';
 
 
 export const getOneMatch = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  if (event.queryStringParameters === null || event.queryStringParameters.gameId === undefined) {
+  if (event.queryStringParameters === null || event.queryStringParameters.gameId === "") {
     return makeErrorResponse(400, 'gameId parameter is required.');
   }
   const gameId = +event.queryStringParameters.gameId;
   if (isNaN(gameId)) {
-    return makeErrorResponse(400, 'invalid gameId.');
+    return makeErrorResponse(400, `'${event.queryStringParameters.gameId}' must be number.`);
   }
 
   const game = await kayn.Match.get(gameId)

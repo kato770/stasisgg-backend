@@ -5,6 +5,7 @@ import { eventMock } from './mock';
 import { kayn } from '../intializeKayn';
 jest.mock('../intializeKayn');
 
+
 // 外部API呼ぶテストってどうなの
 // describe('getMatchHandler test', () => {
 //   it('get 1 game(id:177026851) from gameId by Promise.all', async () => {
