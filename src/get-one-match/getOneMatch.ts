@@ -1,15 +1,9 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { kayn } from '../intializeKayn';
 import { makeErrorResponse } from '../responseBuilder';
-import * as fs from 'fs';
 
 
 export const getOneMatch: APIGatewayProxyHandler = async (event, _context) => {
-  fs.writeFile("test.txt", JSON.stringify(_context, null, 2), function(err) {
-    if (err) {
-        console.log(err);
-    }
-});
   if (event.queryStringParameters === null || event.queryStringParameters.gameId === undefined) {
     return makeErrorResponse(400, 'gameId parameter is required.');
   }
