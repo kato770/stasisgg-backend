@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '../intializeKayn';
 import { MatchV4MatchDTO } from 'kayn/typings/dtos';
-import { makeErrorResponse } from '../responseBuilder';
+import { makeResponse, makeErrorResponse } from '../responseBuilder';
 
 
 export async function getMatchesFromGameIdsPromiseAll(gameIds: number[]): Promise<MatchV4MatchDTO[]> {
@@ -42,11 +42,5 @@ export const getLast10Matches = async (event: APIGatewayProxyEvent): Promise<API
   const results = await getMatchesFromGameIdsPromiseAll(nonNullableGameIds);
   console.log(results[0], results.length);
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      params: event.queryStringParameters,
-      message: nonNullableGameIds,
-    }),
-  };
+  return makeResponse(200, event.queryStringParameters, nonNullableGameIds);
 };
