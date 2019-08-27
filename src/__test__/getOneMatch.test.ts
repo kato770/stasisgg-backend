@@ -28,11 +28,12 @@ describe('get-one-match', () => {
     console.log(result);
     expect(result.statusCode).toBe(400);
   });
-  it('with gameId doesn\'t exist in riot server', async () => {
+  it('with invalid riot api key', async () => {
     eventMock.queryStringParameters = {
       "gameId": "999999999999999"
     };
     const result = await lambda.getOneMatch(eventMock);
     console.log(result);
+    expect(result.statusCode).toBe(403);
   });
 });
