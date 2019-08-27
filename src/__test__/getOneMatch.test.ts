@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as lambda from '../get-one-match/getOneMatch';
 import { eventMock } from './mock';
-//import { kayn } from '../intializeKayn';
-//jest.mock('../intializeKayn');
+import { kayn } from '../intializeKayn';
+jest.mock('../intializeKayn');
 
 
 describe('get-one-match', () => {
@@ -28,12 +28,13 @@ describe('get-one-match', () => {
     console.log(result);
     expect(result.statusCode).toBe(400);
   });
-  // it('with invalid riot api key', async () => {
-  //   eventMock.queryStringParameters = {
-  //     "gameId": "999999999999999"
-  //   };
-  //   const result = await lambda.getOneMatch(eventMock);
-  //   console.log(result);
-  //   expect(result.statusCode).toBe(403);
-  // });
+  it('normal request', async () => {
+    (kayn.Match.get as any).mockImplementation(() => Promise.resolve("normal response"));
+    eventMock.queryStringParameters = {
+      "gameId": "999999999999999"
+    };
+    const result = await lambda.getOneMatch(eventMock);
+    console.log(result);
+    expect(result.statusCode).toBe(200);
+  });
 });
