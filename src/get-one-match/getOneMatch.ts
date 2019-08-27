@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '../intializeKayn';
-import { makeErrorResponse } from '../responseBuilder';
+import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../responseBuilder';
 
 
 export const getOneMatch = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -12,17 +12,19 @@ export const getOneMatch = async (event: APIGatewayProxyEvent): Promise<APIGatew
     return makeErrorResponse(400, `'${event.queryStringParameters.gameId}' must be number.`);
   }
 
-  const game = await kayn.Match.get(gameId)
-    .then(data => data)
-    .catch(err => {
-      return makeErrorResponse(+err.statusCode, err.error);
-    });
-
-  return {
+  let response: APIGatewayProxyResult = {
     statusCode: 200,
     body: JSON.stringify({
-      params: event.queryStringParameters,
-      message: game,
-    }),
+      message: ""
+    })
   };
+  await kayn.Match.get(gameId)
+    .then(data => {
+      response = makeResponse(200, event.queryStringParameters, data);
+    })
+    .catch(err => {
+      response = makeAPIErrorResponse(err);
+    });
+
+  return response;
 };

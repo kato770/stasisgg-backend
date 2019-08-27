@@ -2,7 +2,7 @@
 import * as lambda from '../get-one-match/getOneMatch';
 import { eventMock } from './mock';
 //import { kayn } from '../intializeKayn';
-jest.mock('../intializeKayn');
+//jest.mock('../intializeKayn');
 
 
 describe('get-one-match', () => {
@@ -27,5 +27,12 @@ describe('get-one-match', () => {
     const result = await lambda.getOneMatch(eventMock);
     console.log(result);
     expect(result.statusCode).toBe(400);
+  });
+  it('with gameId doesn\'t exist in riot server', async () => {
+    eventMock.queryStringParameters = {
+      "gameId": "999999999999999"
+    };
+    const result = await lambda.getOneMatch(eventMock);
+    console.log(result);
   });
 });
