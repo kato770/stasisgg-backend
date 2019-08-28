@@ -3,7 +3,7 @@ import { Kayn, REGIONS } from 'kayn';
 
 const RIOT_LOL_API_KEY = process.env.RIOT_LOL_API_KEY || 'dummyAPIKey';
 export const kayn = Kayn(RIOT_LOL_API_KEY)({
-  region: REGIONS.JAPAN,
+  region: REGIONS.KOREA,
   debugOptions: {
     isEnabled: true,
     showKey: true,
