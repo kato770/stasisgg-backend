@@ -34,3 +34,9 @@ functions:
       - http:
           method: get
           path: get-one-match
+  get-one-match-card:
+    handler: src/get-one-match-card/getOneMatchCard.getOneMatchCard
+    events:
+      - http:
+          method: get
+          path: get-one-match-card
