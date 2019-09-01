@@ -25,14 +25,14 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   if (!game || !game.participantIdentities || !game.participantIdentities) {
     return makeErrorResponse(404, 'invalid match information');
   }
-  const participantId = game.participantIdentities.find(participant => {
+  const participantIdentity = game.participantIdentities.find(participant => {
     if (participant.player) {
       return participant.player.summonerId == summonerId;
     }
   });
-  if (!participantId) {
+  if (!participantIdentity) {
     return makeErrorResponse(404, `summonerId: ${summonerId} doesn't exist in gameId: ${gameId}`);
   }
 
-  return makeResponse(200, event.queryStringParameters, participantId.participantId);
+  return makeResponse(200, event.queryStringParameters, participantIdentity.participantId);
 };
