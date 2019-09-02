@@ -4,13 +4,13 @@ import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../respon
 import { MatchV4MatchDTO, MatchV4ParticipantDTO } from 'kayn/typings/dtos';
 
 
-// type matchInformation = {
-//   gameMode: string;
-//   win: boolean;
-//   gameDurationSecond: number;
-//   Date: string;
-//   gameVersion: string;
-// };
+type matchInformation = {
+  gameMode: string;
+  win: boolean;
+  gameDurationSecond: number;
+  gameCreatetionUnix: number;
+  gameVersion: string;
+};
 
 export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: string): MatchV4ParticipantDTO {
   if (!game || !game.participantIdentities || !game.participantIdentities || !game.participants) {
@@ -60,6 +60,18 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     return makeErrorResponse(404, error.message);
   }
 
+  if (!player.stats) {
+    return makeErrorResponse(404, `participantId: ${player.participantId} doesn't have MatchV4ParticipantDTO.stats`);
+  }
+
+  const match: matchInformation = {
+    gameMode: game.gameMode || 'Unknown Mode',
+    win: player.stats.win || false,
+    gameDurationSecond: game.gameDuration || 0,
+    gameCreatetionUnix: game.gameCreation || 0,
+    gameVersion: game.gameVersion || 'Unkonwn Version',
+  };
+
   // TODO: make response more useful
-  return makeResponse(200, event.queryStringParameters, player.participantId);
+  return makeResponse(200, event.queryStringParameters, match);
 };
