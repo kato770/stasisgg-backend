@@ -8,7 +8,7 @@ type matchInformation = {
   gameMode: string;
   win: boolean;
   gameDurationSecond: number;
-  gameCreatetionUnix: number;
+  gameCreationUnix: number;
   gameVersion: string;
 };
 
@@ -68,7 +68,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     gameMode: game.gameMode || 'Unknown Mode',
     win: player.stats.win || false,
     gameDurationSecond: game.gameDuration || 0,
-    gameCreatetionUnix: game.gameCreation || 0,
+    gameCreationUnix: game.gameCreation || 0,
     gameVersion: game.gameVersion || 'Unknown Version',
   };
 
