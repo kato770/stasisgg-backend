@@ -60,5 +60,6 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     return makeErrorResponse(404, error.message);
   }
 
+  // TODO: make response more useful
   return makeResponse(200, event.queryStringParameters, player.participantId);
 };
