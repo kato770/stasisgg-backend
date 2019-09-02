@@ -4,15 +4,15 @@ import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../respon
 import { MatchV4MatchDTO, MatchV4ParticipantDTO } from 'kayn/typings/dtos';
 
 
-type matchInformation = {
-  gameMode: string;
-  win: boolean;
-  gameDurationSecond: number;
-  Date: string;
-  gameVersion: string;
-};
+// type matchInformation = {
+//   gameMode: string;
+//   win: boolean;
+//   gameDurationSecond: number;
+//   Date: string;
+//   gameVersion: string;
+// };
 
-function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: string): MatchV4ParticipantDTO {
+export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: string): MatchV4ParticipantDTO {
   if (!game || !game.participantIdentities || !game.participantIdentities || !game.participants) {
     throw new Error('invalid match information');
   }
@@ -57,7 +57,8 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   try {
     player = getPlayerDTO(game, gameId, summonerId);
   } catch (error) {
-    return makeErrorResponse(404, error);
+    console.log(error);
+    return makeErrorResponse(404, error.message);
   }
 
   return makeResponse(200, event.queryStringParameters, player.participantId);
