@@ -57,7 +57,6 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   try {
     player = getPlayerDTO(game, gameId, summonerId);
   } catch (error) {
-    console.log(error);
     return makeErrorResponse(404, error.message);
   }
 
