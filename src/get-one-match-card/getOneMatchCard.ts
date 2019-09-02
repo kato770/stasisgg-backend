@@ -69,7 +69,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     win: player.stats.win || false,
     gameDurationSecond: game.gameDuration || 0,
     gameCreatetionUnix: game.gameCreation || 0,
-    gameVersion: game.gameVersion || 'Unkonwn Version',
+    gameVersion: game.gameVersion || 'Unknown Version',
   };
 
   // TODO: make response more useful
