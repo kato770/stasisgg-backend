@@ -42,5 +42,6 @@ export const getLast10Matches = async (event: APIGatewayProxyEvent): Promise<API
   const results = await getMatchesFromGameIdsPromiseAll(nonNullableGameIds);
   console.log(results[0], results.length);
 
+  // TODO: make response more useful
   return makeResponse(200, event.queryStringParameters, nonNullableGameIds);
 };
