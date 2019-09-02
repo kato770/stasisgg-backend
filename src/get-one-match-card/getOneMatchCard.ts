@@ -1,8 +1,38 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '../intializeKayn';
 import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../responseBuilder';
-import { MatchV4MatchDTO } from 'kayn/typings/dtos';
+import { MatchV4MatchDTO, MatchV4ParticipantDTO } from 'kayn/typings/dtos';
 
+
+type matchInformation = {
+  gameMode: string;
+  win: boolean;
+  gameDurationSecond: number;
+  Date: string;
+  gameVersion: string;
+};
+
+function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: string): MatchV4ParticipantDTO {
+  if (!game || !game.participantIdentities || !game.participantIdentities || !game.participants) {
+    throw new Error('invalid match information');
+  }
+  const playerIdentity = game.participantIdentities.find(pIdentity => {
+    if (pIdentity.player) {
+      return pIdentity.player.summonerId == summonerId;
+    }
+  });
+
+  if (!playerIdentity) {
+    throw new Error(`summonerId: ${summonerId} doesn't exist in gameId: ${gameId}`);
+  }
+
+  const player = game.participants.find(p => p.participantId == playerIdentity.participantId);
+  if (!player) {
+    throw new Error(`summonerId: ${summonerId} doesn't exist in gameId: ${gameId}`);
+  }
+
+  return player;
+}
 
 export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   if (event.queryStringParameters === null || !event.queryStringParameters.gameId || !event.queryStringParameters.summonerId) {
@@ -19,20 +49,16 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   let game: MatchV4MatchDTO;
   try {
     game = await kayn.Match.get(gameId);
-  } catch (err) {
-    return makeAPIErrorResponse(err);
-  }
-  if (!game || !game.participantIdentities || !game.participantIdentities) {
-    return makeErrorResponse(404, 'invalid match information');
-  }
-  const participantIdentity = game.participantIdentities.find(participant => {
-    if (participant.player) {
-      return participant.player.summonerId == summonerId;
-    }
-  });
-  if (!participantIdentity) {
-    return makeErrorResponse(404, `summonerId: ${summonerId} doesn't exist in gameId: ${gameId}`);
+  } catch (error) {
+    return makeAPIErrorResponse(error);
   }
 
-  return makeResponse(200, event.queryStringParameters, participantIdentity.participantId);
+  let player: MatchV4ParticipantDTO;
+  try {
+    player = getPlayerDTO(game, gameId, summonerId);
+  } catch (error) {
+    return makeErrorResponse(404, error);
+  }
+
+  return makeResponse(200, event.queryStringParameters, player.participantId);
 };
