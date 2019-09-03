@@ -1,4 +1,4 @@
-import { getMapFromQueueId } from '../queueHelper';
+import { getMapFromQueueId } from '../../helper/queueHelper';
 
 
 describe('getMapFromQueueId', () => {

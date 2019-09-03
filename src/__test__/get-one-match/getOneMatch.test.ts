@@ -3,7 +3,7 @@ import * as lambda from '../../get-one-match/getOneMatch';
 import { eventMock } from '../mock';
 import { kayn } from '../../helper/intializeKayn';
 import * as faker from '../3827552557.json';
-jest.mock('../../intializeKayn.ts');
+jest.mock('../../helper/intializeKayn.ts');
 
 
 describe('get-one-match', () => {

@@ -4,7 +4,7 @@ import * as lambda from '../../get-one-match-card/getOneMatchCard';
 import { eventMock } from '../mock';
 import { kayn } from '../../helper/intializeKayn';
 import { faker, fakerMatch } from '../faker_3827552557';
-jest.mock('../../intializeKayn.ts');
+jest.mock('../../helper/intializeKayn.ts');
 
 
 describe('get-one-match-card', () => {
