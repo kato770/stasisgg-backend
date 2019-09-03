@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { kayn } from '../intializeKayn';
-import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../responseBuilder';
+import { kayn } from '..//helper/intializeKayn';
+import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
 
 
 export const getOneMatch = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {

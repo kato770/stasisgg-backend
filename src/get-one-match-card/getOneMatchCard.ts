@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { kayn } from '../intializeKayn';
-import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../responseBuilder';
+import { kayn } from '..//helper/intializeKayn';
+import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
 import { MatchV4MatchDTO, MatchV4ParticipantDTO } from 'kayn/typings/dtos';
 
 
@@ -71,6 +71,8 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     gameCreationUnix: game.gameCreation || 0,
     gameVersion: game.gameVersion || 'Unknown Version',
   };
+  const profile = await kayn.DDragon.ProfileIcon.list();
+  console.log(profile);
 
   // TODO: make response more useful
   return makeResponse(200, event.queryStringParameters, match);

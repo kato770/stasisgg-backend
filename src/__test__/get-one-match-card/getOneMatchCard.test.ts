@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as lambda from '../../get-one-match-card/getOneMatchCard';
 import { eventMock } from '../mock';
-import { kayn } from '../../intializeKayn';
+import { kayn } from '../../helper/intializeKayn';
 import { faker, fakerMatch } from '../faker_3827552557';
 jest.mock('../../intializeKayn.ts');
 

@@ -2,7 +2,7 @@
 import * as lambda from '../../get-last-10-matches/getLast10Matches';
 //import * as data from './177026851.json';
 import { eventMock } from '../mock';
-import { kayn } from '../../intializeKayn';
+import { kayn } from '../../helper/intializeKayn';
 jest.mock('../../intializeKayn.ts');
 
 
