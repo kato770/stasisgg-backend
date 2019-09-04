@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '..//helper/intializeKayn';
 import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
-import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantStatsDTO, MatchV4ParticipantTimelineDTO } from 'kayn/typings/dtos';
+import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantIdentityDTO, MatchV4ParticipantStatsDTO, MatchV4ParticipantTimelineDTO } from 'kayn/typings/dtos';
 import { DDragon } from '../helper/ddragon';
 import { getMapFromQueueId } from '../helper/queueHelper';
 
@@ -95,6 +95,30 @@ export async function getItemsInformation(ddragon: DDragon, stats: MatchV4Partic
   }
 
   return items;
+}
+
+export async function getParticipantsInformation(ddragon: DDragon, participants: MatchV4ParticipantDTO[], participantIdentities: MatchV4ParticipantIdentityDTO[], player: MatchV4ParticipantDTO): Promise<participant[]> {
+  const participantList = await Promise.all(participants.map(async participant => {
+    const championIconURL = await ddragon.getChampionSpriteURL(participant.championId);
+    const identity = participantIdentities.find(identity => {
+      return identity.participantId === participant.participantId;
+    });
+    let summonerName: string;
+    if (!identity || !identity.player || !identity.player.summonerName) {
+      summonerName = 'Unknown Player';
+    } else {
+      summonerName = identity.player.summonerName;
+    }
+    const p: participant = {
+      participantId: participant.participantId || 0,
+      championIconURL: championIconURL,
+      summonerName: summonerName,
+      isYou: player.participantId === participant.participantId
+    };
+    return p;
+  }));
+
+  return participantList;
 }
 
 export function getLane(timeLine: MatchV4ParticipantTimelineDTO): Lane {
@@ -201,27 +225,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     kp: kp
   };
 
-  const participantIdentities = game.participantIdentities;
-  const participants = await Promise.all(game.participants.map(async participant => {
-    const championIconURL = await ddragon.getChampionSpriteURL(participant.championId);
-    const identity = participantIdentities.find(identity => {
-      return identity.participantId === participant.participantId;
-    });
-    let summonerName: string;
-    if (!identity || !identity.player || !identity.player.summonerName) {
-      summonerName = 'Unknown Player';
-    } else {
-      summonerName = identity.player.summonerName;
-    }
-    const p: participant = {
-      participantId: participant.participantId || 0,
-      championIconURL: championIconURL,
-      summonerName: summonerName,
-      isYou: player.participantId === participant.participantId
-    };
-    console.log(p);
-    return p;
-  }));
+  const participants = await getParticipantsInformation(ddragon, game.participants, game.participantIdentities, player);
 
   const responseBody = {
     match: matchInformation,
