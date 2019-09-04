@@ -20,6 +20,13 @@ type item = {
   spriteURL: string;
 };
 
+type participant = {
+  participantId: number;
+  championIconURL: string;
+  summonerName: string;
+  isYou: boolean;
+};
+
 type matchInformation = {
   gameMode: string;
   win: boolean;
@@ -152,6 +159,10 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     return makeErrorResponse(404, `participantId: ${player.participantId} doesn't have stats or timeline`);
   }
 
+  if (!game.participants || !game.participantIdentities) {
+    return makeErrorResponse(404, 'Are you alone?');
+  }
+
   const matchInformation: matchInformation = {
     gameMode: getMapFromQueueId(game.queueId) || 'Unknown Mode',
     win: player.stats.win || false,
@@ -190,9 +201,32 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     kp: kp
   };
 
+  const participantIdentities = game.participantIdentities;
+  const participants = await Promise.all(game.participants.map(async participant => {
+    const championIconURL = await ddragon.getChampionSpriteURL(participant.championId);
+    const identity = participantIdentities.find(identity => {
+      return identity.participantId === participant.participantId;
+    });
+    let summonerName: string;
+    if (!identity || !identity.player || !identity.player.summonerName) {
+      summonerName = 'Unknown Player';
+    } else {
+      summonerName = identity.player.summonerName;
+    }
+    const p: participant = {
+      participantId: participant.participantId || 0,
+      championIconURL: championIconURL,
+      summonerName: summonerName,
+      isYou: player.participantId === participant.participantId
+    };
+    console.log(p);
+    return p;
+  }));
+
   const responseBody = {
     match: matchInformation,
-    player: playerInformation
+    player: playerInformation,
+    participants: participants
   };
 
   // TODO: make response more useful
