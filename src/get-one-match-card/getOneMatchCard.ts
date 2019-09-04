@@ -74,8 +74,8 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   };
   
   const ddragon = new DDragon();
-  await ddragon.getLatestVersion();
-  console.log(ddragon.version);
+  const version = await ddragon.getLatestVersion();
+  console.log(await ddragon.getItemSpriteURL(version, 1001));
 
   // TODO: make response more useful
   return makeResponse(200, event.queryStringParameters, match);
