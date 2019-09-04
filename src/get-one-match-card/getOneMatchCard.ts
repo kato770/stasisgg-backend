@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '..//helper/intializeKayn';
 import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
-import { MatchV4MatchDTO, MatchV4ParticipantDTO } from 'kayn/typings/dtos';
+import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantStatsDTO } from 'kayn/typings/dtos';
 import { DDragon } from '../helper/ddragon';
 
 
@@ -11,6 +11,11 @@ type matchInformation = {
   gameDurationSecond: number;
   gameCreationUnix: number;
   gameVersion: string;
+};
+
+type item = {
+  order: number;
+  spriteURL: string;
 };
 
 export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: string): MatchV4ParticipantDTO {
@@ -33,6 +38,28 @@ export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: 
   }
 
   return player;
+}
+
+export async function getItemsInformation(ddragon: DDragon, stats: MatchV4ParticipantStatsDTO): Promise<Array<item>> {
+  const itemIds: { id: number; order: number }[] = [];
+  itemIds.push({id: stats.item0 || 0, order: 0});
+  itemIds.push({id: stats.item1 || 0, order: 1});
+  itemIds.push({id: stats.item2 || 0, order: 2});
+  itemIds.push({id: stats.item3 || 0, order: 3});
+  itemIds.push({id: stats.item4 || 0, order: 4});
+  itemIds.push({id: stats.item5 || 0, order: 5});
+  itemIds.push({id: stats.item6 || 0, order: 6});
+
+  const items: Array<item> = [];
+  for (const itemId of itemIds) {
+    if (itemId.id === 0) {
+      items.push({ order: itemId.order, spriteURL: "" });
+    } else {
+      items.push({ order: itemId.order, spriteURL: await ddragon.getItemSpriteURL(itemId.id) });
+    }
+  }
+
+  return items;
 }
 
 export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -74,8 +101,8 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   };
   
   const ddragon = new DDragon();
-  const version = await ddragon.getLatestVersion();
-  console.log(await ddragon.getItemSpriteURL(version, 1001));
+  const items = await getItemsInformation(ddragon, player.stats);
+  console.log(items);
 
   // TODO: make response more useful
   return makeResponse(200, event.queryStringParameters, match);

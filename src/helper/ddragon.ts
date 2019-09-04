@@ -17,7 +17,7 @@ export class DDragon {
     });
   }
 
-  async getItemList(specifiedVersion: string): Promise<string> {
+  async getItemList(specifiedVersion?: string): Promise<string> {
     const version = specifiedVersion || await this.getLatestVersion();
     return new Promise((resolve, reject): void => {
       axios.get(`${this.ddragon}/cdn/${version}/data/en_US/item.json`)
@@ -26,7 +26,7 @@ export class DDragon {
     });
   }
 
-  async getItemSpriteURL(specifiedVersion: string, itemId: number): Promise<string> {
+  async getItemSpriteURL(itemId: number, specifiedVersion?: string): Promise<string> {
     const version = specifiedVersion || await this.getLatestVersion();
     return `${this.ddragon}/cdn/${version}/img/item/${itemId}.png`;
   }
