@@ -117,6 +117,7 @@ export function getKillParticipation(participants: MatchV4ParticipantDTO[] | und
     return accumulator + (current.stats.kills || 0);
   }, initialValue);
   const kd = (targetStats.kills || 0) + (targetStats.assists || 0);
+  // round to the nearest whole number. e.g. 42
   return Math.round(kd / teamKills * 100);
 }
 
@@ -163,10 +164,10 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId);
   const lane: Lane = getLane(player.timeline);
   let kda = ((player.stats.kills || 0) + (player.stats.assists || 0)) / (player.stats.deaths || 0);
-  // round to two decimal places e.g. 5.33
+  // round to two decimal places. e.g. 5.33
   kda = Math.round(kda * 100) / 100;
   const totalCS = (player.stats.totalMinionsKilled || 0) + (player.stats.neutralMinionsKilled || 0);
-  // round to one decimal place e.g. 9.1
+  // round to one decimal place. e.g. 9.1
   const csPerMinuites = Math.round(totalCS / matchInformation.gameDurationSecond * 60 * 10) / 10;
   const kp = getKillParticipation(game.participants, player.teamId, player.stats);
 
@@ -188,6 +189,11 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     kp: kp
   };
 
+  const responseBody = {
+    match: matchInformation,
+    player: playerInformation
+  };
+
   // TODO: make response more useful
-  return makeResponse(200, event.queryStringParameters, playerInformation);
+  return makeResponse(200, event.queryStringParameters, responseBody);
 };
