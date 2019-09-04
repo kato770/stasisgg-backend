@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '..//helper/intializeKayn';
 import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
 import { MatchV4MatchDTO, MatchV4ParticipantDTO } from 'kayn/typings/dtos';
+import { DDragon } from '../helper/ddragon';
 
 
 type matchInformation = {
@@ -71,8 +72,10 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     gameCreationUnix: game.gameCreation || 0,
     gameVersion: game.gameVersion || 'Unknown Version',
   };
-  const profile = await kayn.DDragon.ProfileIcon.list();
-  console.log(profile);
+  
+  const ddragon = new DDragon();
+  await ddragon.getLatestVersion();
+  console.log(ddragon.version);
 
   // TODO: make response more useful
   return makeResponse(200, event.queryStringParameters, match);
