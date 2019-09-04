@@ -150,7 +150,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     return makeErrorResponse(404, `participantId: ${player.participantId} doesn't have stats or timeline`);
   }
 
-  const match: matchInformation = {
+  const matchInformation: matchInformation = {
     gameMode: game.gameMode || 'Unknown Mode',
     win: player.stats.win || false,
     gameDurationSecond: game.gameDuration || 0,
@@ -167,7 +167,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   kda = Math.round(kda * 100) / 100;
   const totalCS = (player.stats.totalMinionsKilled || 0) + (player.stats.neutralMinionsKilled || 0);
   // round to one decimal place e.g. 9.1
-  const csPerMinuites = Math.round(totalCS / match.gameDurationSecond * 60 * 10) / 10;
+  const csPerMinuites = Math.round(totalCS / matchInformation.gameDurationSecond * 60 * 10) / 10;
   const kp = getKillParticipation(game.participants, player.teamId, player.stats);
 
   const playerInformation: playerInformation = {
