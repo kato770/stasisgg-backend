@@ -33,6 +33,7 @@ type playerInformation = {
   kill: number;
   death: number;
   assist: number;
+  kda: number;
   level: number;  // champLevel
   cs: number;  // totalMinionsKilled
   csPerMinuites: number;
@@ -161,9 +162,10 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   const items = await getItemsInformation(ddragon, player.stats);
   const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId);
   const lane: Lane = getLane(player.timeline);
+  const kda = ((player.stats.kills || 0) + (player.stats.assists || 0)) / (player.stats.deaths || 0);
   const totalCS = (player.stats.totalMinionsKilled || 0) + (player.stats.neutralMinionsKilled || 0);
   // round to one decimal place e.g. 9.1
-  const csPerMinuites = Math.round(totalCS / match.gameDurationSecond * 60 * 10)/10;
+  const csPerMinuites = Math.round(totalCS / match.gameDurationSecond * 60 * 10) / 10;
   const kp = getKillParticipation(game.participants, player.teamId, player.stats);
 
   const playerInformation: playerInformation = {
@@ -177,11 +179,13 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     kill: player.stats.kills || 0,
     death: player.stats.deaths || 0,
     assist: player.stats.assists || 0,
+    kda: kda,
     level: player.stats.champLevel || 0,
     cs: totalCS,
     csPerMinuites: csPerMinuites,
     kp: kp
   };
+
   // TODO: make response more useful
   return makeResponse(200, event.queryStringParameters, playerInformation);
 };
