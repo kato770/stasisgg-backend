@@ -5,14 +5,6 @@ import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantStatsDTO, Mat
 import { DDragon } from '../helper/ddragon';
 
 
-type matchInformation = {
-  gameMode: string;
-  win: boolean;
-  gameDurationSecond: number;
-  gameCreationUnix: number;
-  gameVersion: string;
-};
-
 enum Lane {
   TOP = 'TOP',
   MIDDLE = 'MIDDLE',
@@ -21,6 +13,19 @@ enum Lane {
   SUPPORT = 'SUPPORT',
   UNKNOWN = ''
 }
+
+type item = {
+  order: number;
+  spriteURL: string;
+};
+
+type matchInformation = {
+  gameMode: string;
+  win: boolean;
+  gameDurationSecond: number;
+  gameCreationUnix: number;
+  gameVersion: string;
+};
 
 type playerInformation = {
   championIconURL: string;
@@ -38,11 +43,6 @@ type playerInformation = {
   cs: number;  // totalMinionsKilled
   csPerMinuites: number;
   kp: number;
-};
-
-type item = {
-  order: number;
-  spriteURL: string;
 };
 
 export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: string): MatchV4ParticipantDTO {
