@@ -162,7 +162,9 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   const items = await getItemsInformation(ddragon, player.stats);
   const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId);
   const lane: Lane = getLane(player.timeline);
-  const kda = ((player.stats.kills || 0) + (player.stats.assists || 0)) / (player.stats.deaths || 0);
+  let kda = ((player.stats.kills || 0) + (player.stats.assists || 0)) / (player.stats.deaths || 0);
+  // round to two decimal places e.g. 5.33
+  kda = Math.round(kda * 100) / 100;
   const totalCS = (player.stats.totalMinionsKilled || 0) + (player.stats.neutralMinionsKilled || 0);
   // round to one decimal place e.g. 9.1
   const csPerMinuites = Math.round(totalCS / match.gameDurationSecond * 60 * 10) / 10;
