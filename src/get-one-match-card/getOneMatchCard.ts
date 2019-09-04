@@ -103,6 +103,8 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   const ddragon = new DDragon();
   const items = await getItemsInformation(ddragon, player.stats);
   console.log(items);
+  const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId);
+  console.log(championSpriteURL);
 
   // TODO: make response more useful
   return makeResponse(200, event.queryStringParameters, match);

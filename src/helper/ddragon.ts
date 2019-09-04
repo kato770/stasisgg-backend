@@ -3,11 +3,8 @@ import axios from 'axios';
 
 export class DDragon {
   readonly ddragon = 'https://ddragon.leagueoflegends.com';
+  readonly cdragon = 'https://cdn.communitydragon.org';
   version: string;
-
-  constructor(version = '9.17') {
-    this.version = version;
-  }
 
   async getLatestVersion(): Promise<string> {
     return new Promise((resolve, reject): void => {
@@ -18,7 +15,19 @@ export class DDragon {
   }
 
   async getItemSpriteURL(itemId: number, specifiedVersion?: string): Promise<string> {
-    const version = specifiedVersion || await this.getLatestVersion();
-    return `${this.ddragon}/cdn/${version}/img/item/${itemId}.png`;
+    if (!this.version) {
+      this.version = specifiedVersion || await this.getLatestVersion();
+    }
+    return `${this.ddragon}/cdn/${this.version}/img/item/${itemId}.png`;
+  }
+
+  async getChampionSpriteURL(championId: number | undefined, specifiedVersion?: string): Promise<string> {
+    if (!championId) {
+      return `${this.cdragon}/${this.version}/champion/generic/square`;
+    }
+    if (!this.version) {
+      this.version = specifiedVersion || await this.getLatestVersion();
+    }
+    return `${this.cdragon}/${this.version}/champion/${championId}/square`;
   }
 }
