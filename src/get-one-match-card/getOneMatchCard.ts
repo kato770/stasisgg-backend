@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { kayn } from '..//helper/intializeKayn';
 import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
-import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantStatsDTO } from 'kayn/typings/dtos';
+import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantStatsDTO, MatchV4ParticipantTimelineDTO } from 'kayn/typings/dtos';
 import { DDragon } from '../helper/ddragon';
 
 
@@ -11,6 +11,32 @@ type matchInformation = {
   gameDurationSecond: number;
   gameCreationUnix: number;
   gameVersion: string;
+};
+
+enum Lane {
+  TOP = 'TOP',
+  MIDDLE = 'MIDDLE',
+  JUNGLE = 'JUNGLE',
+  BOTTOM = 'BOTTOM',
+  SUPPORT = 'SUPPORT',
+  UNKNOWN = ''
+}
+
+type playerInformation = {
+  championIconURL: string;
+  lanePosition: Lane;  // MIDDLE, TOP, JUNGLE, BOTTOM, SUPPORT
+  summonerSpell1Id: number;  // spell1Id
+  summonerSpell2Id: number;  // spell2Id
+  runeMain: number;  // perk0
+  runeSub: number;  // perkSubStyle
+  items: Array<item>;
+  kill: number;
+  death: number;
+  assist: number;
+  level: number;  // champLevel
+  cs: number;  // totalMinionsKilled
+  csPerMinuites: number;
+  kp: number;
 };
 
 type item = {
@@ -62,6 +88,37 @@ export async function getItemsInformation(ddragon: DDragon, stats: MatchV4Partic
   return items;
 }
 
+export function getLane(timeLine: MatchV4ParticipantTimelineDTO): Lane {
+  if (!timeLine.lane || !timeLine.role) {
+    return Lane.UNKNOWN;
+  }
+  if (timeLine.lane === Lane.BOTTOM) {
+    if (timeLine.role === 'DUO_CARRY') {
+      return Lane.BOTTOM;
+    } else {
+      return Lane.SUPPORT;
+    }
+  } else {
+    return timeLine.lane as Lane;
+  }
+}
+
+export function getKillParticipation(participants: MatchV4ParticipantDTO[] | undefined, teamId: number | undefined, targetStats: MatchV4ParticipantStatsDTO): number {
+  if (!participants || !teamId) {
+    return 0;
+  }
+  const myTeam = participants.filter(player => player.teamId === teamId);
+  const initialValue = 0;
+  const teamKills = myTeam.reduce((accumulator, current) => {
+    if (!current.stats) {
+      return 0;
+    }
+    return accumulator + (current.stats.kills || 0);
+  }, initialValue);
+  const kd = (targetStats.kills || 0) + (targetStats.assists || 0);
+  return Math.round(kd / teamKills * 100);
+}
+
 export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   if (event.queryStringParameters === null || !event.queryStringParameters.gameId || !event.queryStringParameters.summonerId) {
     return makeErrorResponse(400, 'gameId and summonerId parameter is required.');
@@ -88,8 +145,8 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     return makeErrorResponse(404, error.message);
   }
 
-  if (!player.stats) {
-    return makeErrorResponse(404, `participantId: ${player.participantId} doesn't have MatchV4ParticipantDTO.stats`);
+  if (!player.stats || !player.timeline) {
+    return makeErrorResponse(404, `participantId: ${player.participantId} doesn't have stats or timeline`);
   }
 
   const match: matchInformation = {
@@ -102,10 +159,29 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   
   const ddragon = new DDragon();
   const items = await getItemsInformation(ddragon, player.stats);
-  console.log(items);
   const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId);
-  console.log(championSpriteURL);
+  const lane: Lane = getLane(player.timeline);
+  const totalCS = (player.stats.totalMinionsKilled || 0) + (player.stats.neutralMinionsKilled || 0);
+  // round to one decimal place e.g. 9.1
+  const csPerMinuites = Math.round(totalCS / match.gameDurationSecond * 60 * 10)/10;
+  const kp = getKillParticipation(game.participants, player.teamId, player.stats);
 
+  const playerInformation: playerInformation = {
+    championIconURL: championSpriteURL,
+    lanePosition: lane,
+    summonerSpell1Id: player.spell1Id || 0,
+    summonerSpell2Id: player.spell2Id || 0,
+    runeMain: player.stats.perk0 || 0,
+    runeSub: player.stats.perkSubStyle || 0,
+    items: items,
+    kill: player.stats.kills || 0,
+    death: player.stats.deaths || 0,
+    assist: player.stats.assists || 0,
+    level: player.stats.champLevel || 0,
+    cs: totalCS,
+    csPerMinuites: csPerMinuites,
+    kp: kp
+  };
   // TODO: make response more useful
-  return makeResponse(200, event.queryStringParameters, match);
+  return makeResponse(200, event.queryStringParameters, playerInformation);
 };
