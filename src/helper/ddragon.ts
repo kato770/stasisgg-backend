@@ -17,15 +17,6 @@ export class DDragon {
     });
   }
 
-  async getItemList(specifiedVersion?: string): Promise<string> {
-    const version = specifiedVersion || await this.getLatestVersion();
-    return new Promise((resolve, reject): void => {
-      axios.get(`${this.ddragon}/cdn/${version}/data/en_US/item.json`)
-        .then(data => resolve(data.data))
-        .catch(error => reject(error));
-    });
-  }
-
   async getItemSpriteURL(itemId: number, specifiedVersion?: string): Promise<string> {
     const version = specifiedVersion || await this.getLatestVersion();
     return `${this.ddragon}/cdn/${version}/img/item/${itemId}.png`;
