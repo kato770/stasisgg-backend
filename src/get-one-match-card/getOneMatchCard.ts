@@ -3,6 +3,7 @@ import { kayn } from '..//helper/intializeKayn';
 import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
 import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantStatsDTO, MatchV4ParticipantTimelineDTO } from 'kayn/typings/dtos';
 import { DDragon } from '../helper/ddragon';
+import { getMapFromQueueId } from '../helper/queueHelper';
 
 
 enum Lane {
@@ -152,7 +153,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   }
 
   const matchInformation: matchInformation = {
-    gameMode: game.gameMode || 'Unknown Mode',
+    gameMode: getMapFromQueueId(game.queueId) || 'Unknown Mode',
     win: player.stats.win || false,
     gameDurationSecond: game.gameDuration || 0,
     gameCreationUnix: game.gameCreation || 0,

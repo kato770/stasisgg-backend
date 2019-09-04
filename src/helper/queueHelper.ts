@@ -4,10 +4,13 @@ const queueList = {
   440: 'Flex',
 };
 
-export function getMapFromQueueId(queueId: number): string {
+export function getMapFromQueueId(queueId: number | undefined): string | undefined {
+  if (!queueId) {
+    return undefined;
+  }
   if (queueList[queueId]) {
     return queueList[queueId];
   } else {
-    throw new Error(`queueId: ${queueId} is not supported`);
+    return undefined;
   }
 }
