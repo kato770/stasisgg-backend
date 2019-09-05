@@ -6,15 +6,16 @@ import { DDragon } from '../helper/ddragon';
 
 
 export const getPlayerProfile = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  if (event.queryStringParameters === null || !event.queryStringParameters.summonerId) {
-    return makeErrorResponse(400, 'summonerId parameter is required.');
+  if (event.queryStringParameters === null || !event.queryStringParameters.summonerName) {
+    return makeErrorResponse(400, 'summonerName parameter is required.');
   }
 
-  const summonerId = event.queryStringParameters.summonerId;
+  const summonerName = event.queryStringParameters.summonerName;
   let player: SummonerV4SummonerDTO;
   try {
-    player = await kayn.Summoner.by.id(summonerId);
+    player = await kayn.Summoner.by.name(summonerName);
   } catch(error) {
+    // if ${summonerName} does't exist in riot server, this return 404 status code
     return makeAPIErrorResponse(error);
   }
 

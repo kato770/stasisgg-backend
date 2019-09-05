@@ -23,9 +23,9 @@ describe('get-player-profile', () => {
     expect(result.statusCode).toBe(400);
   });
   it('normal request', async () => {
-    (kayn.Summoner.by.id as any).mockImplementation(() => Promise.resolve(faker));
+    (kayn.Summoner.by.name as any).mockImplementation(() => Promise.resolve(faker));
     eventMock.queryStringParameters = {
-      "summonerId": faker.summonerId
+      "summonerName": faker.summonerName
     };
     const result = await lambda.getPlayerProfile(eventMock);
     console.log(result);

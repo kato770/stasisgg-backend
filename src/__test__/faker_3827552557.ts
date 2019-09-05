@@ -9,7 +9,7 @@ export const faker = {
   'currentPlatformId': 'KR',
   'currentAccountId': 'TMV6ZAOcjgxIJ4Y3w3HZpGVhbP1tbjRLV_ZKwMbhy0bu',
   'matchHistoryUri': '/v1/stats/player_history/KR/3440481',
-  'summonerLevel': 254,
+  'summonerLevel': 251,
   'name': 'Hide on bush',
   'profileIconId': 6,
   'participantId': 8,
