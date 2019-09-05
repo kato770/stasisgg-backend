@@ -39,7 +39,7 @@ describe('get-one-match-card', () => {
       "summonerId": faker.summonerId
     };
     const result = await lambda.getOneMatchCard(eventMock);
-    console.log(result);
+    //console.log(result);
     expect(result.statusCode).toBe(200);
   });
   it('getPlayerDTO return success', async () => {
