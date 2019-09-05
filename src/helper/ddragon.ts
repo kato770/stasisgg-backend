@@ -30,4 +30,11 @@ export class DDragon {
     }
     return `${this.cdragon}/${this.version}/champion/${championId}/square`;
   }
+
+  async getProfileIconURL(profileIconId: number): Promise<string> {
+    if (!this.version) {
+      this.version = await this.getLatestVersion();
+    }
+    return `${this.ddragon}/cdn/${this.version}/img/profileicon/${profileIconId}.png`;
+  }
 }

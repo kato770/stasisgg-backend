@@ -11,4 +11,8 @@ get-last-10-matches:
 
 .PHONY: get-one-match-card
 get-one-match-card:
-	curl "${SERVER}/get-one-match-card?gameId=3827552557&summonerId=3dKU4SONiX0Vh69_gBab3pRZIh9_vwNuojjYyy9L1R26lg" | jq
+	curl "${SERVER}/get-one-match-card?gameId=3827552557&summonerId=nDIF0AC_2TL5V0q6qBFwyvv9nv5uRL0Js0FpuTnr80c46w" | jq
+
+.PHONY: get-player-profile
+get-player-profile:
+	curl "${SERVER}/get-player-profile?summonerId=nDIF0AC_2TL5V0q6qBFwyvv9nv5uRL0Js0FpuTnr80c46w" | jq
