@@ -57,7 +57,6 @@ export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: 
   if (!game || !game.participantIdentities || !game.participantIdentities || !game.participants) {
     throw new Error('invalid match information');
   }
-  console.log(game.participantIdentities);
   const playerIdentity = game.participantIdentities.find(pIdentity => {
     if (pIdentity.player) {
       return pIdentity.player.summonerId == summonerId;
