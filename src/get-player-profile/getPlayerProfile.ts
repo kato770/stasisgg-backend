@@ -19,7 +19,7 @@ export const getPlayerProfile = async (event: APIGatewayProxyEvent): Promise<API
     return makeAPIErrorResponse(error);
   }
 
-  if (!player.name || !player.profileIconId || !player.summonerLevel) {
+  if (!player.id || !player.profileIconId || !player.summonerLevel) {
     return makeErrorResponse(404, 'player information are missing.');
   }
 
@@ -27,6 +27,7 @@ export const getPlayerProfile = async (event: APIGatewayProxyEvent): Promise<API
   const profileIconURL = await ddragon.getProfileIconURL(player.profileIconId);
 
   const responseBody = {
+    summonerId: player.id,
     profileIconURL: profileIconURL,
     summonerName: player.name,
     summonerLevel: player.summonerLevel
