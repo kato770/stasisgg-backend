@@ -16,7 +16,7 @@ describe('get-player-profile', () => {
   });
   it('with empty parameter', async () => {
     eventMock.queryStringParameters = {
-      "summonerId": ""
+      "summonerName": ""
     };
     const result = await lambda.getPlayerProfile(eventMock);
     console.log(result);
