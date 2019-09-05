@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { kayn } from '../intializeKayn';
+import { kayn } from '..//helper/intializeKayn';
 import { MatchV4MatchDTO } from 'kayn/typings/dtos';
-import { makeResponse, makeErrorResponse } from '../responseBuilder';
+import { makeResponse, makeErrorResponse } from '../helper/responseBuilder';
 
 
 export async function getMatchesFromGameIdsPromiseAll(gameIds: number[]): Promise<MatchV4MatchDTO[]> {

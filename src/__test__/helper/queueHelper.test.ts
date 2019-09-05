@@ -1,4 +1,4 @@
-import { getMapFromQueueId } from '../queueHelper';
+import { getMapFromQueueId } from '../../helper/queueHelper';
 
 
 describe('getMapFromQueueId', () => {
@@ -11,9 +11,7 @@ describe('getMapFromQueueId', () => {
   it('return Flex', () => {
     expect(getMapFromQueueId(440)).toBe('Flex');
   });
-  it('return error', () => {
-    expect(() => {
-      getMapFromQueueId(999);
-    }).toThrow(new Error(`queueId: 999 is not supported`));
+  it('return undefind', () => {
+    expect(getMapFromQueueId(999)).toBe(undefined);
   });
 });

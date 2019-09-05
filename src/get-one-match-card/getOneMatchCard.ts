@@ -1,8 +1,31 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { kayn } from '../intializeKayn';
-import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../responseBuilder';
-import { MatchV4MatchDTO, MatchV4ParticipantDTO } from 'kayn/typings/dtos';
+import { kayn } from '..//helper/intializeKayn';
+import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
+import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantIdentityDTO, MatchV4ParticipantStatsDTO, MatchV4ParticipantTimelineDTO } from 'kayn/typings/dtos';
+import { DDragon } from '../helper/ddragon';
+import { getMapFromQueueId } from '../helper/queueHelper';
 
+
+enum Lane {
+  TOP = 'TOP',
+  MIDDLE = 'MIDDLE',
+  JUNGLE = 'JUNGLE',
+  BOTTOM = 'BOTTOM',
+  SUPPORT = 'SUPPORT',
+  UNKNOWN = ''
+}
+
+type item = {
+  order: number;
+  spriteURL: string;
+};
+
+type participant = {
+  participantId: number;
+  championIconURL: string;
+  summonerName: string;
+  isYou: boolean;
+};
 
 type matchInformation = {
   gameMode: string;
@@ -10,6 +33,24 @@ type matchInformation = {
   gameDurationSecond: number;
   gameCreationUnix: number;
   gameVersion: string;
+};
+
+type playerInformation = {
+  championIconURL: string;
+  lanePosition: Lane;  // MIDDLE, TOP, JUNGLE, BOTTOM, SUPPORT
+  summonerSpell1Id: number;  // spell1Id
+  summonerSpell2Id: number;  // spell2Id
+  runeMain: number;  // perk0
+  runeSub: number;  // perkSubStyle
+  items: Array<item>;
+  kill: number;
+  death: number;
+  assist: number;
+  kda: number;
+  level: number;  // champLevel
+  cs: number;  // totalMinionsKilled
+  csPerMinuites: number;
+  kp: number;
 };
 
 export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: string): MatchV4ParticipantDTO {
@@ -32,6 +73,84 @@ export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: 
   }
 
   return player;
+}
+
+export async function getItemsInformation(ddragon: DDragon, stats: MatchV4ParticipantStatsDTO): Promise<Array<item>> {
+  const itemIds: { id: number; order: number }[] = [];
+  itemIds.push({id: stats.item0 || 0, order: 0});
+  itemIds.push({id: stats.item1 || 0, order: 1});
+  itemIds.push({id: stats.item2 || 0, order: 2});
+  itemIds.push({id: stats.item3 || 0, order: 3});
+  itemIds.push({id: stats.item4 || 0, order: 4});
+  itemIds.push({id: stats.item5 || 0, order: 5});
+  itemIds.push({id: stats.item6 || 0, order: 6});
+
+  const items: Array<item> = [];
+  for (const itemId of itemIds) {
+    if (itemId.id === 0) {
+      items.push({ order: itemId.order, spriteURL: "" });
+    } else {
+      items.push({ order: itemId.order, spriteURL: await ddragon.getItemSpriteURL(itemId.id) });
+    }
+  }
+
+  return items;
+}
+
+export async function getParticipantsInformation(ddragon: DDragon, participants: MatchV4ParticipantDTO[], participantIdentities: MatchV4ParticipantIdentityDTO[], player: MatchV4ParticipantDTO): Promise<participant[]> {
+  const participantList = await Promise.all(participants.map(async participant => {
+    const championIconURL = await ddragon.getChampionSpriteURL(participant.championId);
+    const identity = participantIdentities.find(identity => {
+      return identity.participantId === participant.participantId;
+    });
+    let summonerName: string;
+    if (!identity || !identity.player || !identity.player.summonerName) {
+      summonerName = 'Unknown Player';
+    } else {
+      summonerName = identity.player.summonerName;
+    }
+    const p: participant = {
+      participantId: participant.participantId || 0,
+      championIconURL: championIconURL,
+      summonerName: summonerName,
+      isYou: player.participantId === participant.participantId
+    };
+    return p;
+  }));
+
+  return participantList;
+}
+
+export function getLane(timeLine: MatchV4ParticipantTimelineDTO): Lane {
+  if (!timeLine.lane || !timeLine.role) {
+    return Lane.UNKNOWN;
+  }
+  if (timeLine.lane === Lane.BOTTOM) {
+    if (timeLine.role === 'DUO_CARRY') {
+      return Lane.BOTTOM;
+    } else {
+      return Lane.SUPPORT;
+    }
+  } else {
+    return timeLine.lane as Lane;
+  }
+}
+
+export function getKillParticipation(participants: MatchV4ParticipantDTO[] | undefined, teamId: number | undefined, targetStats: MatchV4ParticipantStatsDTO): number {
+  if (!participants || !teamId) {
+    return 0;
+  }
+  const myTeam = participants.filter(player => player.teamId === teamId);
+  const initialValue = 0;
+  const teamKills = myTeam.reduce((accumulator, current) => {
+    if (!current.stats) {
+      return 0;
+    }
+    return accumulator + (current.stats.kills || 0);
+  }, initialValue);
+  const kd = (targetStats.kills || 0) + (targetStats.assists || 0);
+  // round to the nearest whole number. e.g. 42
+  return Math.round(kd / teamKills * 100);
 }
 
 export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -60,18 +179,60 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     return makeErrorResponse(404, error.message);
   }
 
-  if (!player.stats) {
-    return makeErrorResponse(404, `participantId: ${player.participantId} doesn't have MatchV4ParticipantDTO.stats`);
+  if (!player.stats || !player.timeline) {
+    return makeErrorResponse(404, `participantId: ${player.participantId} doesn't have stats or timeline`);
   }
 
-  const match: matchInformation = {
-    gameMode: game.gameMode || 'Unknown Mode',
+  if (!game.participants || !game.participantIdentities) {
+    return makeErrorResponse(404, 'Are you alone?');
+  }
+
+  const matchInformation: matchInformation = {
+    gameMode: getMapFromQueueId(game.queueId) || 'Unknown Mode',
     win: player.stats.win || false,
     gameDurationSecond: game.gameDuration || 0,
     gameCreationUnix: game.gameCreation || 0,
     gameVersion: game.gameVersion || 'Unknown Version',
   };
+  
+  const ddragon = new DDragon();
+  const items = await getItemsInformation(ddragon, player.stats);
+  const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId);
+  const lane: Lane = getLane(player.timeline);
+  let kda = ((player.stats.kills || 0) + (player.stats.assists || 0)) / (player.stats.deaths || 0);
+  // round to two decimal places. e.g. 5.33
+  kda = Math.round(kda * 100) / 100;
+  const totalCS = (player.stats.totalMinionsKilled || 0) + (player.stats.neutralMinionsKilled || 0);
+  // round to one decimal place. e.g. 9.1
+  const csPerMinuites = Math.round(totalCS / matchInformation.gameDurationSecond * 60 * 10) / 10;
+  const kp = getKillParticipation(game.participants, player.teamId, player.stats);
+
+  const playerInformation: playerInformation = {
+    championIconURL: championSpriteURL,
+    lanePosition: lane,
+    summonerSpell1Id: player.spell1Id || 0,
+    summonerSpell2Id: player.spell2Id || 0,
+    runeMain: player.stats.perk0 || 0,
+    runeSub: player.stats.perkSubStyle || 0,
+    items: items,
+    kill: player.stats.kills || 0,
+    death: player.stats.deaths || 0,
+    assist: player.stats.assists || 0,
+    kda: kda,
+    level: player.stats.champLevel || 0,
+    cs: totalCS,
+    csPerMinuites: csPerMinuites,
+    kp: kp
+  };
+
+  const participants = await getParticipantsInformation(ddragon, game.participants, game.participantIdentities, player);
+
+  const responseBody = {
+    match: matchInformation,
+    player: playerInformation,
+    participants: participants
+  };
 
   // TODO: make response more useful
-  return makeResponse(200, event.queryStringParameters, match);
+  return makeResponse(200, event.queryStringParameters, responseBody);
 };
