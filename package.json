@@ -1,8 +1,7 @@
 {
   "name": "stasisgg-backend",
   "version": "1.0.0",
-  "description": "Serverless webpack example using Typescript",
-  "main": "handler.js",
+  "description": "BFF for stasis.gg",
   "scripts": {
     "test": "jest --verbose",
     "dev": "sls offline",
