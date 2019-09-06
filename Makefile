@@ -7,7 +7,7 @@ get-one-match:
 
 .PHONY: get-last-10-matches
 get-last-10-matches: 
-	curl "${SERVER}/get-last-10-matches?name=Hide+on+bush" | jq
+	curl "${SERVER}/get-last-10-matches?name=Hide+on+bush&region=kr" | jq
 
 .PHONY: get-one-match-card
 get-one-match-card:
