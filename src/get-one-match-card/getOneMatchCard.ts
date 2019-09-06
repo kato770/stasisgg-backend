@@ -1,4 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { REGIONS } from 'kayn';
 import { kayn } from '..//helper/intializeKayn';
 import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
 import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantIdentityDTO, MatchV4ParticipantStatsDTO, MatchV4ParticipantTimelineDTO } from 'kayn/typings/dtos';
@@ -154,8 +155,8 @@ export function getKillParticipation(participants: MatchV4ParticipantDTO[] | und
 }
 
 export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  if (event.queryStringParameters === null || !event.queryStringParameters.gameId || !event.queryStringParameters.summonerId) {
-    return makeErrorResponse(400, 'gameId and summonerId parameter is required.');
+  if (event.queryStringParameters === null || !event.queryStringParameters.gameId || !event.queryStringParameters.summonerId || !event.queryStringParameters.region) {
+    return makeErrorResponse(400, 'gameId, summonerId, and region parameter is required.');
   }
 
   const gameId = +event.queryStringParameters.gameId;
@@ -165,9 +166,14 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
 
   const summonerId = event.queryStringParameters.summonerId;
 
+  const region = event.queryStringParameters.region;
+  if (!Object.values(REGIONS).includes(region)) {
+    return makeErrorResponse(400, `${region} must be one of ${Object.values(REGIONS)}`);
+  }
+  
   let game: MatchV4MatchDTO;
   try {
-    game = await kayn.Match.get(gameId);
+    game = await kayn.Match.get(gameId).region(region);
   } catch (error) {
     return makeAPIErrorResponse(error);
   }
