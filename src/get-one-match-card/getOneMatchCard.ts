@@ -170,7 +170,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   if (!Object.values(REGIONS).find(value => value === region)) {
     return makeErrorResponse(400, `${region} must be one of ${Object.values(REGIONS)}`);
   }
-  
+
   let game: MatchV4MatchDTO;
   try {
     game = await kayn.Match.get(gameId).region(region);
