@@ -167,7 +167,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   const summonerId = event.queryStringParameters.summonerId;
 
   const region = event.queryStringParameters.region;
-  if (!Object.values(REGIONS).includes(region)) {
+  if (!Object.values(REGIONS).find(value => value === region)) {
     return makeErrorResponse(400, `${region} must be one of ${Object.values(REGIONS)}`);
   }
   

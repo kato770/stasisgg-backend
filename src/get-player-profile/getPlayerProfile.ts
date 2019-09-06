@@ -6,8 +6,8 @@ import { DDragon } from '../helper/ddragon';
 
 
 export const getPlayerProfile = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  if (event.queryStringParameters === null || !event.queryStringParameters.summonerName) {
-    return makeErrorResponse(400, 'summonerName parameter is required.');
+  if (event.queryStringParameters === null || !event.queryStringParameters.summonerName || !event.queryStringParameters.region) {
+    return makeErrorResponse(400, 'summonerName and region parameter are required.');
   }
 
   const summonerName = event.queryStringParameters.summonerName;
