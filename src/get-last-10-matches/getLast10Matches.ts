@@ -40,7 +40,7 @@ export const getLast10Matches = async (event: APIGatewayProxyEvent): Promise<API
 
   const responseBody = {
     matchesCount: nonNullableGameIds.length,
-    matches: nonNullableGameIds
+    matchIds: nonNullableGameIds
   };
 
   // TODO: make response more useful
