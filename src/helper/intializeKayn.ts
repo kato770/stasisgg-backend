@@ -6,7 +6,7 @@ export const kayn = Kayn(RIOT_LOL_API_KEY)({
   region: REGIONS.KOREA,
   debugOptions: {
     isEnabled: true,
-    showKey: true,
+    showKey: false,
   },
   requestOptions: {
     shouldRetry: true,
