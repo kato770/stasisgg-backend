@@ -16,24 +16,12 @@ provider:
   runtime: nodejs10.x
 
 functions:
-  hello:
-    handler: src/hello/hello.hello
-    events:
-      - http:
-          method: get
-          path: hello
   get-last-10-matches:
     handler: src/get-last-10-matches/getLast10Matches.getLast10Matches
     events:
       - http:
           method: get
           path: get-last-10-matches
-  get-one-match:
-    handler: src/get-one-match/getOneMatch.getOneMatch
-    events:
-      - http:
-          method: get
-          path: get-one-match
   get-one-match-card:
     handler: src/get-one-match-card/getOneMatchCard.getOneMatchCard
     events:
