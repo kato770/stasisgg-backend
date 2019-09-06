@@ -24,8 +24,8 @@ describe('get-last-10-matches', () => {
 
   it('with empty name parameter', async () => {
     eventMock.queryStringParameters = {
-      "summonerName": "",
-      "region": ""
+      'summonerName': '',
+      'region': ''
     };
     const result = await lambda.getLast10Matches(eventMock);
     console.log(result);
@@ -36,8 +36,8 @@ describe('get-last-10-matches', () => {
     const unknownName = 'I\'m nobody jhkh';
     const regionMock = {
       region: jest.fn(() => Promise.resolve({
-        "summonerName": unknownName,
-        "accountId": undefined
+        'summonerName': unknownName,
+        'accountId': undefined
       }))
     };
     (kayn.Summoner.by.name as any).mockImplementation(() => regionMock);
