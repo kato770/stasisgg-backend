@@ -10,10 +10,10 @@
     "outDir": "lib",
     "resolveJsonModule": true,
     "types": ["jest", "node"],
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "include": [
     "node_modules/@types/",
     "src/"
-  ],
+  ]
 }

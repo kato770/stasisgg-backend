@@ -17,7 +17,8 @@ describe('get-one-match-card', () => {
   it('with empty parameter', async () => {
     eventMock.queryStringParameters = {
       "gameId": "",
-      "summonerId": ""
+      "summonerId": "",
+      "region": ""
     };
     const result = await lambda.getOneMatchCard(eventMock);
     console.log(result);
@@ -26,17 +27,22 @@ describe('get-one-match-card', () => {
   it('with invalid gameId parameter', async () => {
     eventMock.queryStringParameters = {
       "gameId": "Invalid gameId",
-      "summonerId": "blahblahblahblah"
+      "summonerId": "blahblahblahblah",
+      "region": "kr"
     };
     const result = await lambda.getOneMatchCard(eventMock);
     console.log(result);
     expect(result.statusCode).toBe(400);
   });
   it('normal request', async () => {
-    (kayn.Match.get as any).mockImplementation(() => Promise.resolve(fakerMatch));
+    const regionMock = {
+      region: jest.fn(() => Promise.resolve(fakerMatch))
+    };
+    (kayn.Match.get as any).mockImplementation(() => regionMock);
     eventMock.queryStringParameters = {
       "gameId": fakerMatch.gameId!.toString(),
-      "summonerId": faker.summonerId
+      "summonerId": faker.summonerId,
+      "region": "kr"
     };
     const result = await lambda.getOneMatchCard(eventMock);
     //console.log(result);
