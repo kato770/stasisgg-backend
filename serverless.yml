@@ -16,6 +16,8 @@ plugins:
 provider:
   name: aws
   runtime: nodejs10.x
+  profile: stasisgg-backend
+  region: ap-northeast-1
 
 functions:
   get-last-10-matches:
