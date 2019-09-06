@@ -12,7 +12,7 @@ export const kayn = Kayn(RIOT_LOL_API_KEY)({
     shouldRetry: true,
     numberOfRetriesBeforeAbort: 3,
     delayBeforeRetry: 1,
-    burst: true,
+    burst: false,
     shouldExitOn403: false,
   },
   cacheOptions: {
