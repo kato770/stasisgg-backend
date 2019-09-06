@@ -16,16 +16,20 @@ describe('get-player-profile', () => {
   });
   it('with empty parameter', async () => {
     eventMock.queryStringParameters = {
-      "summonerName": ""
+      'summonerName': ''
     };
     const result = await lambda.getPlayerProfile(eventMock);
     console.log(result);
     expect(result.statusCode).toBe(400);
   });
   it('normal request', async () => {
-    (kayn.Summoner.by.name as any).mockImplementation(() => Promise.resolve(faker));
+    const regionMock = {
+      region: jest.fn(() => Promise.resolve(faker))
+    };
+    (kayn.Summoner.by.name as any).mockImplementation(() => regionMock);
     eventMock.queryStringParameters = {
-      "summonerName": faker.summonerName
+      'summonerName': faker.summonerName,
+      'region': 'kr'
     };
     const result = await lambda.getPlayerProfile(eventMock);
     //console.log(result);

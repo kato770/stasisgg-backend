@@ -156,7 +156,7 @@ export function getKillParticipation(participants: MatchV4ParticipantDTO[] | und
 
 export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   if (event.queryStringParameters === null || !event.queryStringParameters.gameId || !event.queryStringParameters.summonerId || !event.queryStringParameters.region) {
-    return makeErrorResponse(400, 'gameId, summonerId, and region parameter is required.');
+    return makeErrorResponse(400, 'gameId, summonerId, and region parameter are required.');
   }
 
   const gameId = +event.queryStringParameters.gameId;
