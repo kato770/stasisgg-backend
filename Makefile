@@ -11,4 +11,4 @@ get-one-match-card:
 
 .PHONY: get-player-profile
 get-player-profile:
-	curl "${SERVER}/get-player-profile?summonerName=hide+on+bush" | jq
+	curl "${SERVER}/get-player-profile?summonerName=hide+on+bush&region=kr" | jq
