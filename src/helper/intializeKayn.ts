@@ -1,8 +1,8 @@
 require('dotenv').config();
-import { Kayn, REGIONS, BasicJSCache, METHOD_NAMES } from 'kayn';
+import { Kayn, REGIONS, LRUCache, METHOD_NAMES } from 'kayn';
 
 const RIOT_LOL_API_KEY = process.env.RIOT_LOL_API_KEY || 'dummyAPIKey';
-const basicCache = new BasicJSCache();
+const lruCache = new LRUCache({ max: 500 });
 
 export const kayn = Kayn(RIOT_LOL_API_KEY)({
   region: REGIONS.KOREA,
@@ -18,14 +18,15 @@ export const kayn = Kayn(RIOT_LOL_API_KEY)({
     shouldExitOn403: false,
   },
   cacheOptions: {
-    cache: basicCache,
+    cache: lruCache,
     timeToLives: {
       useDefault: true,
-      byGroup: {},
+      byGroup: {
+        MATCH: 60 * 60 * 24 * 30,
+      },
       byMethod: {
         [METHOD_NAMES.SUMMONER.GET_BY_SUMMONER_NAME_V4]: 1000,
-        [METHOD_NAMES.MATCH.GET_MATCHLIST_V4]: 1000,
-        [METHOD_NAMES.MATCH.GET_MATCH_V4]: 1000
+        [METHOD_NAMES.MATCH.GET_MATCHLIST_V4]: 1000
       },
     },
   },
