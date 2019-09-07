@@ -26,7 +26,7 @@ export const kayn = Kayn(RIOT_LOL_API_KEY)({
       },
       byMethod: {
         [METHOD_NAMES.SUMMONER.GET_BY_SUMMONER_NAME_V4]: 1000,
-        [METHOD_NAMES.MATCH.GET_MATCHLIST_V4]: 1000
+        [METHOD_NAMES.MATCH.GET_MATCHLIST_V4]: 1000 * 60 * 5
       },
     },
   },
