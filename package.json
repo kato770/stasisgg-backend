@@ -4,7 +4,7 @@
   "description": "BFF for stasis.gg",
   "scripts": {
     "test": "jest --verbose",
-    "dev": "sls offline",
+    "dev": "cross-env DEBUG=kayn:* sls offline",
     "deploy": "sls deploy"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "@types/webpack": "^4.39.0",
     "@typescript-eslint/eslint-plugin": "^2.1.0",
     "@typescript-eslint/parser": "^2.1.0",
+    "cross-env": "^5.2.1",
     "eslint": "^6.3.0",
     "hiredis": "^0.5.0",
     "jest": "^24.9.0",
