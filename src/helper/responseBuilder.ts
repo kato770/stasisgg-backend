@@ -6,6 +6,9 @@ import { KaynError } from 'kayn';
 export function makeResponse(statusCode: number, params: { [name: string]: string } | null, message: any): APIGatewayProxyResult {
   return {
     statusCode: statusCode,
+    headers: {
+      "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
+    },
     body: JSON.stringify({
       params: params,
       message: message
@@ -16,6 +19,9 @@ export function makeResponse(statusCode: number, params: { [name: string]: strin
 export function makeErrorResponse(statusCode: number, message: string): APIGatewayProxyResult {
   return {
     statusCode: statusCode,
+    headers: {
+      "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
+    },
     body: JSON.stringify({
       message: message
     })
@@ -30,6 +36,9 @@ export function makeAPIErrorResponse(err: KaynError): APIGatewayProxyResult {
   };
   return {
     statusCode: err.error['response']['statusCode'],
+    headers: {
+      "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
+    },
     body: JSON.stringify(responseBody)
   };
 }

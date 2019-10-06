@@ -38,3 +38,4 @@ functions:
       - http:
           method: get
           path: get-player-profile
+          cors: true
