@@ -25,6 +25,7 @@ type participant = {
   participantId: number;
   championIconURL: string;
   summonerName: string;
+  lanePosition: Lane;
   isYou: boolean;
 };
 
@@ -98,30 +99,6 @@ export async function getItemsInformation(ddragon: DDragon, stats: MatchV4Partic
   return items;
 }
 
-export async function getParticipantsInformation(ddragon: DDragon, participants: MatchV4ParticipantDTO[], participantIdentities: MatchV4ParticipantIdentityDTO[], player: MatchV4ParticipantDTO): Promise<participant[]> {
-  const participantList = await Promise.all(participants.map(async participant => {
-    const championIconURL = await ddragon.getChampionSpriteURL(participant.championId);
-    const identity = participantIdentities.find(identity => {
-      return identity.participantId === participant.participantId;
-    });
-    let summonerName: string;
-    if (!identity || !identity.player || !identity.player.summonerName) {
-      summonerName = 'Unknown Player';
-    } else {
-      summonerName = identity.player.summonerName;
-    }
-    const p: participant = {
-      participantId: participant.participantId || 0,
-      championIconURL: championIconURL,
-      summonerName: summonerName,
-      isYou: player.participantId === participant.participantId
-    };
-    return p;
-  }));
-
-  return participantList;
-}
-
 export function getLane(timeLine: MatchV4ParticipantTimelineDTO): Lane {
   if (!timeLine.lane || !timeLine.role) {
     return Lane.UNKNOWN;
@@ -135,6 +112,37 @@ export function getLane(timeLine: MatchV4ParticipantTimelineDTO): Lane {
   } else {
     return timeLine.lane as Lane;
   }
+}
+
+export async function getParticipantsInformation(ddragon: DDragon, participants: MatchV4ParticipantDTO[], participantIdentities: MatchV4ParticipantIdentityDTO[], player: MatchV4ParticipantDTO): Promise<participant[]> {
+  const participantList = await Promise.all(participants.map(async participant => {
+    const championIconURL = await ddragon.getChampionSpriteURL(participant.championId);
+    const identity = participantIdentities.find(identity => {
+      return identity.participantId === participant.participantId;
+    });
+    let summonerName: string;
+    if (!identity || !identity.player || !identity.player.summonerName) {
+      summonerName = 'Unknown Player';
+    } else {
+      summonerName = identity.player.summonerName;
+    }
+    let lane: Lane;
+    if (!participant.timeline) {
+      lane = Lane.UNKNOWN;
+    } else {
+      lane = getLane(participant.timeline);
+    }
+    const p: participant = {
+      participantId: participant.participantId || 0,
+      championIconURL: championIconURL,
+      summonerName: summonerName,
+      lanePosition: lane,
+      isYou: player.participantId === participant.participantId
+    };
+    return p;
+  }));
+
+  return participantList;
 }
 
 export function getKillParticipation(participants: MatchV4ParticipantDTO[] | undefined, teamId: number | undefined, targetStats: MatchV4ParticipantStatsDTO): number {
