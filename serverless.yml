@@ -26,16 +26,25 @@ functions:
       - http:
           method: get
           path: get-last-10-matches
+          cors: true
   get-one-match-card:
     handler: src/get-one-match-card/getOneMatchCard.getOneMatchCard
     events:
       - http:
           method: get
           path: get-one-match-card
+          cors: true
   get-player-profile:
     handler: src/get-player-profile/getPlayerProfile.getPlayerProfile
     events:
       - http:
           method: get
           path: get-player-profile
+          cors: true
+  get-matches:
+    handler: src/get-matches/getMatches.getMatches
+    events:
+      - http:
+          method: get
+          path: get-matches
           cors: true
