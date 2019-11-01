@@ -55,15 +55,10 @@ export const getMatches = async (
   if (nonNullableGameIds.length === 0) {
     return makeErrorResponse(404, "No gameIds.");
   }
-  const requests = nonNullableGameIds.map(
-    async id => await kayn.Match.get(id).region(region)
-  );
-  const results = await Promise.all(requests);
 
   const responseBody = {
     matchesCount: nonNullableGameIds.length,
-    matchIds: nonNullableGameIds,
-    macthes: results
+    matchIds: nonNullableGameIds
   };
 
   // TODO: make response more useful
