@@ -52,7 +52,7 @@ type playerInformation = {
   kda: number;
   level: number;  // champLevel
   cs: number;  // totalMinionsKilled
-  csPerMinuites: number;
+  csPerMinutes: number;
   kp: number;
 };
 
@@ -223,7 +223,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   }
   const totalCS = (player.stats.totalMinionsKilled || 0) + (player.stats.neutralMinionsKilled || 0);
   // round to one decimal place. e.g. 9.1
-  const csPerMinuites = Math.round(totalCS / matchInformation.gameDurationSecond * 60 * 10) / 10;
+  const csPerMinutes = Math.round(totalCS / matchInformation.gameDurationSecond * 60 * 10) / 10;
   const kp = getKillParticipation(game.participants, player.teamId, player.stats);
 
   const playerInformation: playerInformation = {
@@ -240,7 +240,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     kda: kda,
     level: player.stats.champLevel || 0,
     cs: totalCS,
-    csPerMinuites: csPerMinuites,
+    csPerMinutes: csPerMinutes,
     kp: kp
   };
 
