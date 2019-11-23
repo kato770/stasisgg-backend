@@ -160,7 +160,7 @@ export function getKillParticipation(participants: MatchV4ParticipantDTO[] | und
   }, initialValue);
   const kd = (targetStats.kills || 0) + (targetStats.assists || 0);
   // round to the nearest whole number. e.g. 42
-  return Math.round(kd / teamKills * 100);
+  return Math.round(kd / teamKills * 100) | 0;
 }
 
 export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
