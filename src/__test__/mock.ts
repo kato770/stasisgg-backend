@@ -48,6 +48,7 @@ export const eventMock: APIGatewayProxyEvent = {
       "cognitoAuthenticationType": "offlineContext_cognitoAuthenticationType",
       "cognitoIdentityId": "offlineContext_cognitoIdentityId",
       "cognitoIdentityPoolId": "offlineContext_cognitoIdentityPoolId",
+      "principalOrgId":  null,
       "sourceIp": "127.0.0.1",
       "user": "offlineContext_user",
       "userAgent": "curl/7.54.0",

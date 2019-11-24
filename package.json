@@ -14,7 +14,7 @@
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.17",
+    "@types/aws-lambda": "^8.10.36",
     "@types/jest": "^24.0.22",
     "@types/node": "^12.12.8",
     "@types/webpack": "^4.39.0",
