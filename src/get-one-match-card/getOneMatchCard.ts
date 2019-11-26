@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { REGIONS } from 'kayn';
-import { kayn } from '..//helper/intializeKayn';
+import { kayn } from '../helper/initializeKayn';
 import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
 import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantIdentityDTO, MatchV4ParticipantStatsDTO, MatchV4ParticipantTimelineDTO } from 'kayn/typings/dtos';
 import { DDragon } from '../helper/ddragon';

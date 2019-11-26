@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as lambda from '../../get-player-profile/getPlayerProfile';
 import { eventMock } from '../mock';
-import { kayn } from '../../helper/intializeKayn';
+import { kayn } from '../../helper/initializeKayn';
 import { faker } from '../faker_3827552557';
-jest.mock('../../helper/intializeKayn.ts');
+jest.mock('../../helper/initializeKayn.ts');
 
 
 describe('get-player-profile', () => {

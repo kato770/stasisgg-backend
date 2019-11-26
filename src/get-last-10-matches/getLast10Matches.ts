@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { REGIONS } from 'kayn';
-import { kayn } from '..//helper/intializeKayn';
+import { kayn } from '../helper/initializeKayn';
 import { makeResponse, makeErrorResponse } from '../helper/responseBuilder';
 
 

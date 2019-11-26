@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as lambda from '../../get-last-10-matches/getLast10Matches';
 import { eventMock } from '../mock';
-import { kayn } from '../../helper/intializeKayn';
-jest.mock('../../helper/intializeKayn.ts');
+import { kayn } from '../../helper/initializeKayn';
+jest.mock('../../helper/initializeKayn.ts');
 
 
 // 外部API呼ぶテストってどうなの
