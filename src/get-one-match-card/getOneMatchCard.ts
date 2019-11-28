@@ -213,7 +213,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   
   const ddragon = new DDragon();
   const items = await getItemsInformation(ddragon, player.stats, game.gameVersion);
-  const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId);
+  const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId, game.gameVersion);
   const lane: Lane = getLane(player.timeline);
   let kda = 0;
   if (player.stats.deaths !== 0) {

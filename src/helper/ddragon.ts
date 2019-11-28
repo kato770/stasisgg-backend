@@ -47,7 +47,7 @@ export class DDragon {
       return `${this.cdragon}/${this.version}/champion/generic/square`;
     }
     if (!this.version) {
-      this.version = specificVersion || await this.getLatestVersion();
+      this.version = await this.getValidVersion(specificVersion);
     }
     return `${this.cdragon}/${this.version}/champion/${championId}/square`;
   }
