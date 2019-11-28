@@ -30,6 +30,7 @@ export function makeErrorResponse(statusCode: number, message: string): APIGatew
 
 export function makeAPIErrorResponse(err: KaynError): APIGatewayProxyResult {
   const responseBody = {
+    message: 'API Error',
     url: err.error['options']['url'],
     requestHeaders: err.error['options']['headers'],
     responseBody: err.error['response']['body']

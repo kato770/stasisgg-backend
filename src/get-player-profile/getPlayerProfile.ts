@@ -21,7 +21,7 @@ export const getPlayerProfile = async (event: APIGatewayProxyEvent): Promise<API
   try {
     player = await kayn.Summoner.by.name(summonerName).region(region);
   } catch(error) {
-    // if ${summonerName} does't exist in riot server, this return 404 status code
+    // if ${summonerName} doesn't exist in riot server, this return 404 status code
     return makeAPIErrorResponse(error);
   }
 
