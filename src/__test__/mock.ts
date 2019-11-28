@@ -64,3 +64,23 @@ export const eventMock: APIGatewayProxyEvent = {
   "stageVariables": null,
   "resource": "",
 };
+
+export const versionsResponse = {
+  "data": [
+    "9.23.1",
+    "9.22.1",
+    "9.21.1",
+    "9.20.1",
+    "9.19.1",
+    "9.18.1",
+    "9.17.1",
+    "9.16.1",
+    "9.15.1",
+    "9.14.1",
+    "9.13.1",
+    "9.12.1",
+    "9.11.1",
+    "9.10.1",
+    "9.9.1"
+  ]
+};

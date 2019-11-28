@@ -78,7 +78,7 @@ export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: 
   return player;
 }
 
-export async function getItemsInformation(ddragon: DDragon, stats: MatchV4ParticipantStatsDTO): Promise<Array<item>> {
+export async function getItemsInformation(ddragon: DDragon, stats: MatchV4ParticipantStatsDTO, specificVersion?: string): Promise<Array<item>> {
   const itemIds: { id: number; order: number }[] = [];
   itemIds.push({id: stats.item0 || 0, order: 0});
   itemIds.push({id: stats.item1 || 0, order: 1});
@@ -93,7 +93,7 @@ export async function getItemsInformation(ddragon: DDragon, stats: MatchV4Partic
     if (itemId.id === 0) {
       items.push({ order: itemId.order, spriteURL: "" });
     } else {
-      items.push({ order: itemId.order, spriteURL: await ddragon.getItemSpriteURL(itemId.id) });
+      items.push({ order: itemId.order, spriteURL: await ddragon.getItemSpriteURL(itemId.id, specificVersion) });
     }
   }
 
@@ -212,7 +212,7 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   };
   
   const ddragon = new DDragon();
-  const items = await getItemsInformation(ddragon, player.stats);
+  const items = await getItemsInformation(ddragon, player.stats, game.gameVersion);
   const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId);
   const lane: Lane = getLane(player.timeline);
   let kda = 0;
