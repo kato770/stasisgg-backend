@@ -1,7 +1,7 @@
-require("dotenv").config();
-import { Kayn, REGIONS, LRUCache, METHOD_NAMES } from "kayn";
+import { Kayn, REGIONS, LRUCache, METHOD_NAMES } from 'kayn';
+require('dotenv').config();
 
-const RIOT_LOL_API_KEY = process.env.RIOT_LOL_API_KEY || "dummyAPIKey";
+const RIOT_LOL_API_KEY = process.env.RIOT_LOL_API_KEY || 'dummyAPIKey';
 const lruCache = new LRUCache({ max: 500 });
 
 export const kayn = Kayn(RIOT_LOL_API_KEY)({

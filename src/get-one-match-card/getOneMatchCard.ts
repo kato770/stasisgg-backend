@@ -1,11 +1,20 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { REGIONS } from 'kayn';
 import { kayn } from '../helper/initializeKayn';
-import { makeErrorResponse, makeAPIErrorResponse, makeResponse } from '../helper/responseBuilder';
-import { MatchV4MatchDTO, MatchV4ParticipantDTO, MatchV4ParticipantIdentityDTO, MatchV4ParticipantStatsDTO, MatchV4ParticipantTimelineDTO } from 'kayn/typings/dtos';
+import {
+  makeErrorResponse,
+  makeAPIErrorResponse,
+  makeResponse
+} from '../helper/responseBuilder';
+import {
+  MatchV4MatchDTO,
+  MatchV4ParticipantDTO,
+  MatchV4ParticipantIdentityDTO,
+  MatchV4ParticipantStatsDTO,
+  MatchV4ParticipantTimelineDTO
+} from 'kayn/typings/dtos';
 import { DDragon } from '../helper/ddragon';
 import { getMapFromQueueId } from '../helper/queueHelper';
-
 
 enum Lane {
   TOP = 'TOP',
@@ -40,60 +49,82 @@ type matchInformation = {
 
 type playerInformation = {
   championIconURL: string;
-  lanePosition: Lane;  // MIDDLE, TOP, JUNGLE, BOTTOM, SUPPORT
-  summonerSpell1Id: number;  // spell1Id
-  summonerSpell2Id: number;  // spell2Id
-  runeMain: number;  // perk0
-  runeSub: number;  // perkSubStyle
+  lanePosition: Lane; // MIDDLE, TOP, JUNGLE, BOTTOM, SUPPORT
+  summonerSpell1Id: number; // spell1Id
+  summonerSpell2Id: number; // spell2Id
+  runeMain: number; // perk0
+  runeSub: number; // perkSubStyle
   items: Array<item>;
   kill: number;
   death: number;
   assist: number;
   kda: number;
-  level: number;  // champLevel
-  cs: number;  // totalMinionsKilled
+  level: number; // champLevel
+  cs: number; // totalMinionsKilled
   csPerMinutes: number;
   kp: number;
 };
 
-export function getPlayerDTO(game: MatchV4MatchDTO, gameId: number, summonerId: string): MatchV4ParticipantDTO {
-  if (!game || !game.participantIdentities || !game.participantIdentities || !game.participants) {
+export function getPlayerDTO(
+  game: MatchV4MatchDTO,
+  gameId: number,
+  summonerId: string
+): MatchV4ParticipantDTO {
+  if (
+    !game ||
+    !game.participantIdentities ||
+    !game.participantIdentities ||
+    !game.participants
+  ) {
     throw new Error('invalid match information');
   }
   const playerIdentity = game.participantIdentities.find(pIdentity => {
     if (pIdentity.player) {
-      return pIdentity.player.summonerId == summonerId;
+      return pIdentity.player.summonerId === summonerId;
     }
   });
 
   if (!playerIdentity) {
-    throw new Error(`summonerId: ${summonerId} doesn't exist in gameId: ${gameId}`);
+    throw new Error(
+      `summonerId: ${summonerId} doesn't exist in gameId: ${gameId}`
+    );
   }
 
-  const player = game.participants.find(p => p.participantId == playerIdentity.participantId);
+  const player = game.participants.find(
+    p => p.participantId === playerIdentity.participantId
+  );
   if (!player) {
-    throw new Error(`summonerId: ${summonerId} doesn't exist in gameId: ${gameId}`);
+    throw new Error(
+      `summonerId: ${summonerId} doesn't exist in gameId: ${gameId}`
+    );
   }
 
   return player;
 }
 
-export async function getItemsInformation(ddragon: DDragon, stats: MatchV4ParticipantStatsDTO, specificVersion?: string): Promise<Array<item>> {
+export async function getItemsInformation(
+  ddragon: DDragon,
+  stats: MatchV4ParticipantStatsDTO,
+  specificVersion?: string
+): Promise<Array<item>> {
   const itemIds: { id: number; order: number }[] = [];
-  itemIds.push({id: stats.item0 || 0, order: 0});
-  itemIds.push({id: stats.item1 || 0, order: 1});
-  itemIds.push({id: stats.item2 || 0, order: 2});
-  itemIds.push({id: stats.item3 || 0, order: 3});
-  itemIds.push({id: stats.item4 || 0, order: 4});
-  itemIds.push({id: stats.item5 || 0, order: 5});
-  itemIds.push({id: stats.item6 || 0, order: 6});
+  itemIds.push({ id: stats.item0 || 0, order: 0 });
+  itemIds.push({ id: stats.item1 || 0, order: 1 });
+  itemIds.push({ id: stats.item2 || 0, order: 2 });
+  itemIds.push({ id: stats.item3 || 0, order: 3 });
+  itemIds.push({ id: stats.item4 || 0, order: 4 });
+  itemIds.push({ id: stats.item5 || 0, order: 5 });
+  itemIds.push({ id: stats.item6 || 0, order: 6 });
 
   const items: Array<item> = [];
   for (const itemId of itemIds) {
     if (itemId.id === 0) {
-      items.push({ order: itemId.order, spriteURL: "" });
+      items.push({ order: itemId.order, spriteURL: '' });
     } else {
-      items.push({ order: itemId.order, spriteURL: await ddragon.getItemSpriteURL(itemId.id, specificVersion) });
+      items.push({
+        order: itemId.order,
+        spriteURL: await ddragon.getItemSpriteURL(itemId.id, specificVersion)
+      });
     }
   }
 
@@ -115,38 +146,51 @@ export function getLane(timeLine: MatchV4ParticipantTimelineDTO): Lane {
   }
 }
 
-export async function getParticipantsInformation(ddragon: DDragon, participants: MatchV4ParticipantDTO[], participantIdentities: MatchV4ParticipantIdentityDTO[], player: MatchV4ParticipantDTO): Promise<participant[]> {
-  const participantList = await Promise.all(participants.map(async participant => {
-    const championIconURL = await ddragon.getChampionSpriteURL(participant.championId);
-    const identity = participantIdentities.find(identity => {
-      return identity.participantId === participant.participantId;
-    });
-    let summonerName: string;
-    if (!identity || !identity.player || !identity.player.summonerName) {
-      summonerName = 'Unknown Player';
-    } else {
-      summonerName = identity.player.summonerName;
-    }
-    let lane: Lane;
-    if (!participant.timeline) {
-      lane = Lane.UNKNOWN;
-    } else {
-      lane = getLane(participant.timeline);
-    }
-    const p: participant = {
-      participantId: participant.participantId || 0,
-      championIconURL: championIconURL,
-      summonerName: summonerName,
-      lanePosition: lane,
-      isYou: player.participantId === participant.participantId
-    };
-    return p;
-  }));
+export async function getParticipantsInformation(
+  ddragon: DDragon,
+  participants: MatchV4ParticipantDTO[],
+  participantIdentities: MatchV4ParticipantIdentityDTO[],
+  player: MatchV4ParticipantDTO
+): Promise<participant[]> {
+  const participantList = await Promise.all(
+    participants.map(async participant => {
+      const championIconURL = await ddragon.getChampionSpriteURL(
+        participant.championId
+      );
+      const identity = participantIdentities.find(identity => {
+        return identity.participantId === participant.participantId;
+      });
+      let summonerName: string;
+      if (!identity || !identity.player || !identity.player.summonerName) {
+        summonerName = 'Unknown Player';
+      } else {
+        summonerName = identity.player.summonerName;
+      }
+      let lane: Lane;
+      if (!participant.timeline) {
+        lane = Lane.UNKNOWN;
+      } else {
+        lane = getLane(participant.timeline);
+      }
+      const p: participant = {
+        participantId: participant.participantId || 0,
+        championIconURL: championIconURL,
+        summonerName: summonerName,
+        lanePosition: lane,
+        isYou: player.participantId === participant.participantId
+      };
+      return p;
+    })
+  );
 
   return participantList;
 }
 
-export function getKillParticipation(participants: MatchV4ParticipantDTO[] | undefined, teamId: number | undefined, targetStats: MatchV4ParticipantStatsDTO): number {
+export function getKillParticipation(
+  participants: MatchV4ParticipantDTO[] | undefined,
+  teamId: number | undefined,
+  targetStats: MatchV4ParticipantStatsDTO
+): number {
   if (!participants || !teamId) {
     return 0;
   }
@@ -160,24 +204,40 @@ export function getKillParticipation(participants: MatchV4ParticipantDTO[] | und
   }, initialValue);
   const kd = (targetStats.kills || 0) + (targetStats.assists || 0);
   // round to the nearest whole number. e.g. 42
-  return Math.round(kd / teamKills * 100) | 0;
+  return Math.round((kd / teamKills) * 100) | 0;
 }
 
-export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  if (event.queryStringParameters === null || !event.queryStringParameters.gameId || !event.queryStringParameters.summonerId || !event.queryStringParameters.region) {
-    return makeErrorResponse(400, 'gameId, summonerId, and region parameter are required.');
+export const getOneMatchCard = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  if (
+    event.queryStringParameters === null ||
+    !event.queryStringParameters.gameId ||
+    !event.queryStringParameters.summonerId ||
+    !event.queryStringParameters.region
+  ) {
+    return makeErrorResponse(
+      400,
+      'gameId, summonerId, and region parameter are required.'
+    );
   }
 
   const gameId = +event.queryStringParameters.gameId;
   if (isNaN(gameId)) {
-    return makeErrorResponse(400, `'${event.queryStringParameters.gameId}' must be number.`);
+    return makeErrorResponse(
+      400,
+      `'${event.queryStringParameters.gameId}' must be number.`
+    );
   }
 
   const summonerId = event.queryStringParameters.summonerId;
 
   const region = event.queryStringParameters.region;
   if (!Object.values(REGIONS).find(value => value === region)) {
-    return makeErrorResponse(400, `${region} must be one of ${Object.values(REGIONS)}`);
+    return makeErrorResponse(
+      400,
+      `${region} must be one of ${Object.values(REGIONS)}`
+    );
   }
 
   let game: MatchV4MatchDTO;
@@ -195,7 +255,10 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
   }
 
   if (!player.stats || !player.timeline) {
-    return makeErrorResponse(404, `participantId: ${player.participantId} doesn't have stats or timeline`);
+    return makeErrorResponse(
+      404,
+      `participantId: ${player.participantId} doesn't have stats or timeline`
+    );
   }
 
   if (!game.participants || !game.participantIdentities) {
@@ -208,23 +271,39 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     win: player.stats.win || false,
     gameDurationSecond: game.gameDuration || 0,
     gameCreationUnix: game.gameCreation || 0,
-    gameVersion: game.gameVersion || 'Unknown Version',
+    gameVersion: game.gameVersion || 'Unknown Version'
   };
-  
+
   const ddragon = new DDragon();
-  const items = await getItemsInformation(ddragon, player.stats, game.gameVersion);
-  const championSpriteURL = await ddragon.getChampionSpriteURL(player.championId, game.gameVersion);
+  const items = await getItemsInformation(
+    ddragon,
+    player.stats,
+    game.gameVersion
+  );
+  const championSpriteURL = await ddragon.getChampionSpriteURL(
+    player.championId,
+    game.gameVersion
+  );
   const lane: Lane = getLane(player.timeline);
   let kda = 0;
   if (player.stats.deaths !== 0) {
-    kda = ((player.stats.kills || 0) + (player.stats.assists || 0)) / (player.stats.deaths || 0);
+    kda =
+      ((player.stats.kills || 0) + (player.stats.assists || 0)) /
+      (player.stats.deaths || 0);
     // round to two decimal places. e.g. 5.33
     kda = Math.round(kda * 100) / 100;
   }
-  const totalCS = (player.stats.totalMinionsKilled || 0) + (player.stats.neutralMinionsKilled || 0);
+  const totalCS =
+    (player.stats.totalMinionsKilled || 0) +
+    (player.stats.neutralMinionsKilled || 0);
   // round to one decimal place. e.g. 9.1
-  const csPerMinutes = Math.round(totalCS / matchInformation.gameDurationSecond * 60 * 10) / 10;
-  const kp = getKillParticipation(game.participants, player.teamId, player.stats);
+  const csPerMinutes =
+    Math.round((totalCS / matchInformation.gameDurationSecond) * 60 * 10) / 10;
+  const kp = getKillParticipation(
+    game.participants,
+    player.teamId,
+    player.stats
+  );
 
   const playerInformation: playerInformation = {
     championIconURL: championSpriteURL,
@@ -244,7 +323,12 @@ export const getOneMatchCard = async (event: APIGatewayProxyEvent): Promise<APIG
     kp: kp
   };
 
-  const participants = await getParticipantsInformation(ddragon, game.participants, game.participantIdentities, player);
+  const participants = await getParticipantsInformation(
+    ddragon,
+    game.participants,
+    game.participantIdentities,
+    player
+  );
 
   const responseBody = {
     match: matchInformation,

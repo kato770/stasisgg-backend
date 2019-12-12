@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 export class DDragon {
   readonly ddragon = 'https://ddragon.leagueoflegends.com';
   readonly cdragon = 'https://cdn.communitydragon.org';
@@ -8,7 +7,8 @@ export class DDragon {
 
   async getLatestVersion(): Promise<string> {
     return new Promise((resolve, reject): void => {
-      axios.get(`${this.ddragon}/api/versions.json`)
+      axios
+        .get(`${this.ddragon}/api/versions.json`)
         .then(data => resolve(data.data[0]))
         .catch(error => reject(error.message));
     });
@@ -17,32 +17,40 @@ export class DDragon {
   async getValidVersion(specificVersion?: string): Promise<string> {
     if (!specificVersion) return this.getLatestVersion();
 
-    const firstPeriod = specificVersion.indexOf(".");
-    const secondPeriod = specificVersion.indexOf(".", firstPeriod + 1);
+    const firstPeriod = specificVersion.indexOf('.');
+    const secondPeriod = specificVersion.indexOf('.', firstPeriod + 1);
     if (secondPeriod === -1) return this.getLatestVersion();
-  
+
     const trimmedVersion = specificVersion.slice(0, secondPeriod);
     try {
       const versions = await axios.get(`${this.ddragon}/api/versions.json`);
-      const foundVersion = versions.data.find((e: string) => e.startsWith(trimmedVersion));
+      const foundVersion = versions.data.find((e: string) =>
+        e.startsWith(trimmedVersion)
+      );
       if (foundVersion) {
         return foundVersion;
       } else {
         throw new Error('something happen');
       }
-    } catch  {
+    } catch {
       return this.getLatestVersion();
     }
   }
 
-  async getItemSpriteURL(itemId: number, specificVersion?: string): Promise<string> {
+  async getItemSpriteURL(
+    itemId: number,
+    specificVersion?: string
+  ): Promise<string> {
     if (!this.version) {
       this.version = await this.getValidVersion(specificVersion);
     }
     return `${this.ddragon}/cdn/${this.version}/img/item/${itemId}.png`;
   }
 
-  async getChampionSpriteURL(championId: number | undefined, specificVersion?: string): Promise<string> {
+  async getChampionSpriteURL(
+    championId: number | undefined,
+    specificVersion?: string
+  ): Promise<string> {
     if (!championId) {
       return `${this.cdragon}/${this.version}/champion/generic/square`;
     }

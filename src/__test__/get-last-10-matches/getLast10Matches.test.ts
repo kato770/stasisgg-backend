@@ -4,16 +4,6 @@ import { eventMock } from '../mock';
 import { kayn } from '../../helper/initializeKayn';
 jest.mock('../../helper/initializeKayn.ts');
 
-
-// 外部API呼ぶテストってどうなの
-// describe('getMatchHandler test', () => {
-//   it('get 1 game(id:177026851) from gameId by Promise.all', async () => {
-//     const gameId = 177026851;
-//     const match = await getMatchesFromGameIdsPromiseAll([gameId]);
-//     expect(match).toMatchObject(data);
-//   });
-// });
-
 describe('get-last-10-matches', () => {
   it('without any queries', async () => {
     eventMock.queryStringParameters = {};
@@ -24,26 +14,28 @@ describe('get-last-10-matches', () => {
 
   it('with empty name parameter', async () => {
     eventMock.queryStringParameters = {
-      'summonerName': '',
-      'region': ''
+      summonerName: '',
+      region: ''
     };
     const result = await lambda.getLast10Matches(eventMock);
     console.log(result);
     expect(result.statusCode).toBe(400);
   });
 
-  it('with name does\'nt exist in riot server', async () => {
-    const unknownName = 'I\'m nobody jhkh';
+  it("with name doesn't exist in riot server", async () => {
+    const unknownName = "I'm nobody jhkh";
     const regionMock = {
-      region: jest.fn(() => Promise.resolve({
-        'summonerName': unknownName,
-        'accountId': undefined
-      }))
+      region: jest.fn(() =>
+        Promise.resolve({
+          summonerName: unknownName,
+          accountId: undefined
+        })
+      )
     };
     (kayn.Summoner.by.name as any).mockImplementation(() => regionMock);
     eventMock.queryStringParameters = {
-      'summonerName': unknownName,
-      'region': 'kr'
+      summonerName: unknownName,
+      region: 'kr'
     };
     const result = await lambda.getLast10Matches(eventMock);
     console.log(result);

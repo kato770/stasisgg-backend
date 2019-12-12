@@ -14,7 +14,9 @@ describe('getValidVersion', () => {
   it('invalid input', async () => {
     const ddragon = new DDragon();
     (axios.get as any).mockResolvedValue(versionsResponse);
-    const version = await ddragon.getValidVersion('Should not pass string like this');
+    const version = await ddragon.getValidVersion(
+      'Should not pass string like this'
+    );
     expect(version).toEqual(await ddragon.getLatestVersion());
   });
 });

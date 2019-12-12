@@ -1,7 +1,7 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { REGIONS } from "kayn";
-import { kayn } from "../helper/initializeKayn";
-import { makeErrorResponse, makeResponse } from "../helper/responseBuilder";
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { REGIONS } from 'kayn';
+import { kayn } from '../helper/initializeKayn';
+import { makeErrorResponse, makeResponse } from '../helper/responseBuilder';
 
 export const getMatches = async (
   event: APIGatewayProxyEvent
@@ -13,7 +13,7 @@ export const getMatches = async (
   ) {
     return makeErrorResponse(
       400,
-      "summonerName and region parameters are required."
+      'summonerName and region parameters are required.'
     );
   }
   const region = event.queryStringParameters.region;
@@ -28,7 +28,7 @@ export const getMatches = async (
   const { accountId } = await kayn.Summoner.by
     .name(summonerName)
     .region(region);
-  //console.log(`name: ${name}\naccountId: ${accountId}`);
+  // console.log(`name: ${name}\naccountId: ${accountId}`);
   if (accountId === undefined) {
     return makeErrorResponse(
       404,
@@ -41,7 +41,7 @@ export const getMatches = async (
     .query({ queue: [420, 430] })
     .region(region);
   if (matches === undefined) {
-    return makeErrorResponse(404, "No games.");
+    return makeErrorResponse(404, 'No games.');
   }
 
   const offset = +event.queryStringParameters.offset || 0;
@@ -53,7 +53,7 @@ export const getMatches = async (
     .filter((item: number | undefined): item is number => item !== null);
 
   if (nonNullableGameIds.length === 0) {
-    return makeErrorResponse(404, "No gameIds.");
+    return makeErrorResponse(404, 'No gameIds.');
   }
 
   const responseBody = {
