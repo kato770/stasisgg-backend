@@ -36,19 +36,19 @@ export const getMatches = async (
     );
   }
 
+  const offset = +event.queryStringParameters.offset || 0;
+  const limit = +event.queryStringParameters.limit || 10;
+
   const { matches } = await kayn.Matchlist.by
     .accountID(accountId)
-    .query({ queue: [420, 430] })
+    .query({ queue: [420, 430], beginIndex: offset, endIndex: offset + limit })
     .region(region);
   if (matches === undefined) {
     return makeErrorResponse(404, 'No games.');
   }
 
-  const offset = +event.queryStringParameters.offset || 0;
-  const limit = +event.queryStringParameters.limit || 10;
   // get non-null game ids
   const nonNullableGameIds: number[] = matches
-    .slice(offset, offset + limit)
     .map(({ gameId }) => gameId)
     .filter((item: number | undefined): item is number => item !== null);
 
