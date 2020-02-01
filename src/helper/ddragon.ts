@@ -3,6 +3,9 @@ import axios from 'axios';
 export class DDragon {
   readonly ddragon = 'https://ddragon.leagueoflegends.com';
   readonly cdragon = 'https://cdn.communitydragon.org';
+  readonly s3resources =
+    'https://stasisgg-resources.s3-ap-northeast-1.amazonaws.com';
+
   version: string;
 
   async getLatestVersion(): Promise<string> {
@@ -37,27 +40,22 @@ export class DDragon {
     }
   }
 
-  async getItemSpriteURL(
-    itemId: number,
-    specificVersion?: string
-  ): Promise<string> {
-    if (!this.version) {
-      this.version = await this.getValidVersion(specificVersion);
-    }
-    return `${this.ddragon}/cdn/${this.version}/img/item/${itemId}.png`;
+  async getItemSpriteURL(itemId: number): Promise<string> {
+    return `${this.s3resources}/img/item/${itemId}.png`;
   }
 
-  async getChampionSpriteURL(
-    championId: number | undefined,
-    specificVersion?: string
-  ): Promise<string> {
+  async getChampionSpriteURL(championId: number | undefined): Promise<string> {
     if (!championId) {
       return `${this.cdragon}/${this.version}/champion/generic/square`;
     }
-    if (!this.version) {
-      this.version = await this.getValidVersion(specificVersion);
+    return `${this.s3resources}/img/champion/${championId}/square.png`;
+  }
+
+  async getChampionSmallSpriteURL(championId): Promise<string> {
+    if (!championId) {
+      return `${this.cdragon}/${this.version}/champion/generic/square`;
     }
-    return `${this.cdragon}/${this.version}/champion/${championId}/square`;
+    return `${this.s3resources}/img/champion/${championId}/square_small.png`;
   }
 
   async getProfileIconURL(profileIconId: number): Promise<string> {

@@ -4,8 +4,9 @@
   "description": "BFF for stasis.gg",
   "scripts": {
     "test": "jest --verbose",
-    "dev": "cross-env DEBUG=kayn:* sls offline",
-    "deploy": "sls deploy"
+    "test-all": "jest",
+    "dev": "cross-env DEBUG=kayn:* NODE_ENV=development sls offline",
+    "deploy": "cross-env NODE_ENV=production sls deploy"
   },
   "dependencies": {
     "axios": "^0.19.0",
