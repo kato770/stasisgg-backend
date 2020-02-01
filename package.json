@@ -35,6 +35,7 @@
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "serverless-dotenv-plugin": "^2.1.1",
+    "serverless-layers": "^1.4.4",
     "serverless-offline": "^5.12.1",
     "serverless-webpack": "^5.2.0",
     "ts-jest": "^24.0.2",

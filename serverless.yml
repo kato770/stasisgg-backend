@@ -10,6 +10,7 @@ plugins:
   - serverless-webpack
   - serverless-offline
   - serverless-dotenv-plugin
+  - serverless-layers
 
 provider:
   name: aws
@@ -17,6 +18,12 @@ provider:
   region: ap-northeast-1
   environment:
     RIOT_LOL_API_KEY: ${env:RIOT_LOL_API_KEY}
+  deploymentBucket:
+    name: 'stasisgg-backend-lambda-layers'
+
+custom:
+  serverless-layers:
+    packageManager: yarn
 
 functions:
   get-last-10-matches:
