@@ -72,10 +72,3 @@ functions:
           method: get
           path: get-matches
           cors: true
-
-resources:
-  Resources:
-    S3BucketOutputs:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ${self:custom.bucket}

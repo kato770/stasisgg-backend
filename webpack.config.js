@@ -1,5 +1,6 @@
 const path = require('path');
 const slsw = require('serverless-webpack');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
@@ -22,5 +23,6 @@ module.exports = {
         loader: 'ts-loader'
       }
     ]
-  }
+  },
+  externals: [nodeExternals()]
 };
