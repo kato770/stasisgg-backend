@@ -10,12 +10,6 @@ plugins:
   - serverless-webpack
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-layers
-
-custom:
-  serverless-layers:
-    packageManager: yarn
-  bucket: 'stasisgg-backend-lambda-layers'
 
 provider:
   name: aws
@@ -23,25 +17,14 @@ provider:
   region: ap-northeast-1
   environment:
     RIOT_LOL_API_KEY: ${env:RIOT_LOL_API_KEY}
-  deploymentBucket:
-    name: ${self:custom.bucket}
-  iamRoleStatements:
-    - Effect: Allow
-      Action: 
-        - "s3:PutObject"
-        - "s3:GetObject"
-      Resource: 
-        - "arn:aws:s3:::${self:custom.bucket}/"
-    - Effect: Allow
-      Action:
-        - "lambda:PublishLayerVersion"
-      Resource:
-        - "*"
-    - Effect: Allow
-      Action:
-        - "cloudformation:DescribeStacks"
-      Resource:
-        - "*"
+
+layers:
+  axios:
+    package:
+      artifact: layers/artifacts/axios.zip
+  kayn:
+    package:
+      artifact: layers/artifacts/kayn.zip
 
 functions:
   get-last-10-matches:
@@ -51,6 +34,10 @@ functions:
           method: get
           path: get-last-10-matches
           cors: true
+    layers:
+      - { Ref: AxiosLambdaLayer }
+      - { Ref: KaynLambdaLayer }
+
   get-one-match-card:
     handler: src/get-one-match-card/getOneMatchCard.getOneMatchCard
     events:
@@ -58,6 +45,10 @@ functions:
           method: get
           path: get-one-match-card
           cors: true
+    layers:
+      - { Ref: AxiosLambdaLayer }
+      - { Ref: KaynLambdaLayer }
+
   get-player-profile:
     handler: src/get-player-profile/getPlayerProfile.getPlayerProfile
     events:
@@ -65,6 +56,10 @@ functions:
           method: get
           path: get-player-profile
           cors: true
+    layers:
+      - { Ref: AxiosLambdaLayer }
+      - { Ref: KaynLambdaLayer }
+
   get-matches:
     handler: src/get-matches/getMatches.getMatches
     events:
@@ -72,3 +67,6 @@ functions:
           method: get
           path: get-matches
           cors: true
+    layers:
+      - { Ref: AxiosLambdaLayer }
+      - { Ref: KaynLambdaLayer }

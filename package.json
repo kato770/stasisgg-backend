@@ -9,9 +9,7 @@
     "deploy": "cross-env NODE_ENV=production sls deploy"
   },
   "dependencies": {
-    "axios": "^0.19.0",
     "dotenv": "^8.1.0",
-    "kayn": "^0.10.0",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
@@ -21,6 +19,7 @@
     "@types/webpack": "^4.41.0",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
+    "axios": "^0.19.0",
     "cross-env": "^6.0.3",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.7.0",
@@ -33,9 +32,9 @@
     "eslint-plugin-standard": "^4.0.1",
     "hiredis": "^0.5.0",
     "jest": "^24.9.0",
+    "kayn": "^0.10.0",
     "prettier": "^1.19.1",
     "serverless-dotenv-plugin": "^2.1.1",
-    "serverless-layers": "^1.4.4",
     "serverless-offline": "^5.12.1",
     "serverless-webpack": "^5.2.0",
     "ts-jest": "^24.0.2",
