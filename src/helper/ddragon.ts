@@ -3,8 +3,7 @@ import axios from 'axios';
 export class DDragon {
   readonly ddragon = 'https://ddragon.leagueoflegends.com';
   readonly cdragon = 'https://cdn.communitydragon.org';
-  readonly s3resources =
-    'https://stasisgg-resources.s3-ap-northeast-1.amazonaws.com';
+  readonly s3resources = 'https://assets.stasisgg.dev';
 
   version: string;
 
