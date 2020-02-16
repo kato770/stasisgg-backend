@@ -1,3 +1,6 @@
+![Bard](https://user-images.githubusercontent.com/17964452/74602396-5e6d9d00-50eb-11ea-9e09-55fef174a9f9.png)
+
+
 # stasisgg-backend
 ![Build and Test](https://github.com/R-NK/stasisgg-backend/workflows/Build%20and%20Test/badge.svg)
 ![Deploy to AWS](https://github.com/R-NK/stasisgg-backend/workflows/Deploy%20master%20branch/badge.svg)
