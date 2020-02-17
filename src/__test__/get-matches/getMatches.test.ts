@@ -1,35 +1,73 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as lambda from '../../get-matches/getMatches';
+import * as lambda from '../../get-matches/getMatchesHandler';
 import { eventMock } from '../mock';
-// import { kayn } from '../../helper/initializeKayn';
+import { GetMatchesService } from '../../get-matches/getMatchesService';
+import { Regions } from 'twisted/dist/constants';
+import { RiotApiTwisted } from '../../infrastructure/riotApiTwisted';
+
+jest.mock('../../infrastructure/riotApiTwisted');
 
 describe('get-matches', () => {
   it('without any queries', async () => {
     eventMock.queryStringParameters = {};
-    const result = await lambda.getMatches(eventMock);
-    console.log(result);
-    expect(result.statusCode).toBe(400);
+    expect(() => {
+      lambda.validateParameters(eventMock.queryStringParameters);
+    }).toThrowError('summonerName and region parameters are required.');
   });
+
   it('with empty parameter', async () => {
     eventMock.queryStringParameters = {
-      gameId: '',
-      summonerId: '',
+      summonerName: '',
       region: ''
     };
-    const result = await lambda.getMatches(eventMock);
-    console.log(result);
-    expect(result.statusCode).toBe(400);
+    expect(() => {
+      lambda.validateParameters(eventMock.queryStringParameters);
+    }).toThrowError('summonerName and region parameters are required.');
   });
+
+  it('with invalid region parameter', async () => {
+    eventMock.queryStringParameters = {
+      summonerName: 'blablabla',
+      region: 'My Home'
+    };
+    expect(() => {
+      lambda.validateParameters(eventMock.queryStringParameters);
+    }).toThrowError('regin must be valid value.');
+  });
+
   it('with invalid offset and limit parameter', async () => {
     eventMock.queryStringParameters = {
       offset: 'Invalid offset',
       limit: 'Invalid limit',
-      summonerId: 'blahblahblahblah',
+      summonerName: 'hide on bush',
       region: 'kr'
     };
-    const result = await lambda.getMatches(eventMock);
-    console.log(result);
-    expect(result.statusCode).toBe(400);
+    expect(
+      lambda.validateParameters(eventMock.queryStringParameters)
+    ).toMatchObject({
+      offset: 0,
+      limit: 10,
+      summonerName: 'hide on bush',
+      region: 'KR'
+    });
+  });
+
+  it('Summoner not found', async () => {
+    const params = {
+      summonerName: 'im not anywhere see you someday',
+      region: Regions.KOREA,
+      offset: 0,
+      limit: 10
+    };
+    RiotApiTwisted.prototype.getRiotAccountIdByName = jest
+      .fn()
+      .mockRejectedValue(new Error('not found'));
+    const api = new RiotApiTwisted();
+    const service = new GetMatchesService(api);
+    const servicePromise = service.startService(params);
+    await expect(servicePromise).rejects.toThrow(
+      `Summoner Name: ${params.summonerName} was not found.`
+    );
   });
 });

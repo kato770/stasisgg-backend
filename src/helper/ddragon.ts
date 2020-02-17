@@ -50,7 +50,9 @@ export class DDragon {
     return `${this.s3resources}/img/champion/${championId}/square.png`;
   }
 
-  async getChampionSmallSpriteURL(championId): Promise<string> {
+  async getChampionSmallSpriteURL(
+    championId: number | undefined
+  ): Promise<string> {
     if (!championId) {
       return `${this.cdragon}/${this.version}/champion/generic/square`;
     }

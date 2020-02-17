@@ -1,9 +1,9 @@
 SERVER := localhost:3000
 
 
-.PHONY: get-last-10-matches
-get-last-10-matches: 
-	curl "${SERVER}/get-last-10-matches?summonerName=Hide+on+bush&region=kr" | jq
+.PHONY: get-matches
+get-matches: 
+	curl "${SERVER}/get-matches?summonerName=Hide+on+bush&region=kr" | jq
 
 .PHONY: get-one-match-card
 get-one-match-card:

@@ -33,5 +33,8 @@ module.exports = {
       }
     }
   ],
-  'rules': {},
+  'rules': {
+    'no-unused-expressions': 'off',
+    '@typescript-eslint/no-unused-expressions': 'error'
+  },
 };
