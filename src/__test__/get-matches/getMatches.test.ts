@@ -5,6 +5,8 @@ import { eventMock } from '../mock';
 import { GetMatchesService } from '../../get-matches/getMatchesService';
 import { Regions } from 'twisted/dist/constants';
 import { RiotApiTwisted } from '../../infrastructure/riotApiTwisted';
+import { Logger } from '../../helper/logger';
+import { ApiNotFoundError } from '../../helper/error';
 
 jest.mock('../../infrastructure/riotApiTwisted');
 
@@ -62,9 +64,10 @@ describe('get-matches', () => {
     };
     RiotApiTwisted.prototype.getRiotAccountIdByName = jest
       .fn()
-      .mockRejectedValue(new Error('not found'));
+      .mockRejectedValue(new ApiNotFoundError());
     const api = new RiotApiTwisted();
-    const service = new GetMatchesService(api);
+    const logger = new Logger().logger;
+    const service = new GetMatchesService(api, logger);
     const servicePromise = service.startService(params);
     await expect(servicePromise).rejects.toThrow(
       `Summoner Name: ${params.summonerName} was not found.`

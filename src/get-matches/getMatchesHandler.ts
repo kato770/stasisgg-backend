@@ -52,7 +52,7 @@ export const getMatchesHandler = async (
   }
 
   try {
-    const getMatchesService = new GetMatchesService(api);
+    const getMatchesService = new GetMatchesService(api, logger);
     const response = await getMatchesService.startService(validParams);
     return {
       statusCode: response.statusCode,

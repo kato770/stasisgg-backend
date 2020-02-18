@@ -14,3 +14,39 @@ export class StasisError extends Error {
     this.detail = message;
   }
 }
+
+export class ApiError extends Error {
+  code: number;
+  constructor(message?: string) {
+    super(message);
+    this.name = new.target.name;
+  }
+}
+
+export class ApiKeyNotFoundError extends ApiError {
+  constructor(message?: string) {
+    super(message);
+    this.code = 403;
+  }
+}
+
+export class ApiNotFoundError extends ApiError {
+  constructor(message?: string) {
+    super(message);
+    this.code = 404;
+  }
+}
+
+export class ApiRateLimitError extends ApiError {
+  constructor(message?: string) {
+    super(message);
+    this.code = 429;
+  }
+}
+
+export class ApiServiceUnavailable extends ApiError {
+  constructor(message?: string) {
+    super(message);
+    this.code = 503;
+  }
+}
