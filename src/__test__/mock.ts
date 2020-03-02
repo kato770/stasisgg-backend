@@ -29,6 +29,7 @@ export const eventMock: APIGatewayProxyEvent = {
       principalId: 'offlineContext_authorizer_principalId'
     },
     httpMethod: 'GET',
+    protocol: 'HTTP/1.1',
     identity: {
       accessKey: null,
       accountId: 'offlineContext_accountId',
