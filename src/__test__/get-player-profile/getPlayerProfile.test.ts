@@ -31,7 +31,7 @@ describe('get-player-profile', () => {
       region: 'kr'
     };
     const result = await lambda.getPlayerProfile(eventMock);
-    // console.log(result);
+    console.log(result);
     expect(result.statusCode).toBe(200);
   });
 });

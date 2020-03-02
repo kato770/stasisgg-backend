@@ -1031,10 +1031,20 @@ ajv-keywords@^3.1.0, ajv-keywords@^3.4.1:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.4.1.tgz#ef916e271c64ac12171fd8384eaae6b2345854da"
   integrity sha512-RO1ibKvd27e6FEShVFfPALuHI3WjSVNeK5FIsmme/LYRNxjKuNj+Dt7bucLa6NdSv3JcVTyMlm9kGR84z1XpaQ==
 
-ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.5.5:
+ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2:
   version "6.11.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.11.0.tgz#c3607cbc8ae392d8a5a536f25b21f8e5f3f87fe9"
   integrity sha512-nCprB/0syFYy9fVYU1ox1l2KN8S9I+tziH8D4zdZuLT3N6RMlGSGt5FSTpAiHB/Whv8Qs1cWHma1aMKZyaHRKA==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    fast-json-stable-stringify "^2.0.0"
+    json-schema-traverse "^0.4.1"
+    uri-js "^4.2.2"
+
+ajv@^6.5.5:
+  version "6.12.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.0.tgz#06d60b96d87b8454a5adaba86e7854da629db4b7"
+  integrity sha512-D6gFiFA0RRLyUbvijN74DWAjXSFxWKaWP7mldxkVhyhAV3+SWA9HEJPHQ2c9soIeTFJqcSdFDGFgdqs1iUU2Hw==
   dependencies:
     fast-deep-equal "^3.1.1"
     fast-json-stable-stringify "^2.0.0"
@@ -6292,9 +6302,9 @@ stack-utils@^1.0.1:
   integrity sha512-MTX+MeG5U994cazkjd/9KNAapsHnibjMLnfXodlkXw76JEea0UiNzrqidzo1emMwk7w5Qhc9jd4Bn9TBb1MFwA==
 
 stasisgg-types@^1.0.6:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/stasisgg-types/-/stasisgg-types-1.2.0.tgz#a6ba0bd75aa81404eb8846194b12a02edaa04138"
-  integrity sha512-HrF8zDh1xosGWhQFAXQI0G13AhRwXL5aU6ejQ+YyB4gxzNxD+HQc1aO9oHwQndRedxfSRtwJGh9nZE9TRUvnpQ==
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/stasisgg-types/-/stasisgg-types-1.2.3.tgz#faa3ca2c4234d487a9fcc6a821185c369489ea78"
+  integrity sha512-erAfUeaN0dKC9Oq8Jgo8kTO64b1NYabF5Ymavc67hn+8NlUD7LNiNUzahZFakOZr3cVf+MMB0PxM36okn+tHww==
   dependencies:
     twisted "^1.17.0"
 

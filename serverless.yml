@@ -31,7 +31,7 @@ layers:
 
 functions:
   get-one-match-card:
-    handler: src/get-one-match-card/getOneMatchCard.getOneMatchCard
+    handler: src/get-one-match-card/getOneMatchCardHandler.getOneMatchCardHandler
     events:
       - http:
           method: get
@@ -39,7 +39,7 @@ functions:
           cors: true
     layers:
       - { Ref: AxiosLambdaLayer }
-      - { Ref: KaynLambdaLayer }
+      - { Ref: TwistedLambdaLayer }
 
   get-player-profile:
     handler: src/get-player-profile/getPlayerProfile.getPlayerProfile

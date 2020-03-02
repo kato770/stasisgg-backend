@@ -57,12 +57,20 @@ export class RiotApiTwisted implements RiotApi {
     region: Regions,
     query?: MatchQueryDTO | undefined
   ): Promise<MatchListingMatches[]> {
-    const matchList = await riot.Match.list(accountId, region, query);
-    return matchList.response.matches;
+    try {
+      const matchList = await riot.Match.list(accountId, region, query);
+      return matchList.response.matches;
+    } catch (err) {
+      this.errorThrower(err);
+    }
   }
 
   async getRiotMatch(matchId: number, region: Regions): Promise<MatchDto> {
-    const match = await riot.Match.get(matchId, region);
-    return match.response;
+    try {
+      const match = await riot.Match.get(matchId, region);
+      return match.response;
+    } catch (err) {
+      this.errorThrower(err);
+    }
   }
 }

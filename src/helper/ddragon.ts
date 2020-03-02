@@ -39,20 +39,18 @@ export class DDragon {
     }
   }
 
-  async getItemSpriteURL(itemId: number): Promise<string> {
+  getItemSpriteURL(itemId: number): string {
     return `${this.s3resources}/img/item/${itemId}.png`;
   }
 
-  async getChampionSpriteURL(championId: number | undefined): Promise<string> {
+  getChampionSpriteURL(championId: number | undefined): string {
     if (!championId) {
       return `${this.cdragon}/${this.version}/champion/generic/square`;
     }
     return `${this.s3resources}/img/champion/${championId}/square.png`;
   }
 
-  async getChampionSmallSpriteURL(
-    championId: number | undefined
-  ): Promise<string> {
+  getChampionSmallSpriteURL(championId: number | undefined): string {
     if (!championId) {
       return `${this.cdragon}/${this.version}/champion/generic/square`;
     }

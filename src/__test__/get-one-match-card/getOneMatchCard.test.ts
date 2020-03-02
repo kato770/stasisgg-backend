@@ -1,58 +1,70 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as lambda from '../../get-one-match-card/getOneMatchCard';
+import * as lambda from '../../get-one-match-card/getOneMatchCardHandler';
 import { eventMock } from '../mock';
-import { kayn } from '../../helper/initializeKayn';
-import { faker, fakerMatch } from '../faker_3827552557';
-jest.mock('../../helper/initializeKayn.ts');
+import { GetOneMatchCardService } from '../../get-one-match-card/getOneMatchCardService';
+import { RiotApiTwisted } from '../../infrastructure/riotApiTwisted';
+import { DDragon } from '../../helper/ddragon';
+import { Regions } from 'twisted/dist/constants';
+import faker from './faker_3827552557_response.json';
+import fakerMatch from './faker_3827552557_getRiotMatch.json';
+
+jest.mock('../../infrastructure/riotApiTwisted');
 
 describe('get-one-match-card', () => {
   it('without any queries', async () => {
     eventMock.queryStringParameters = {};
-    const result = await lambda.getOneMatchCard(eventMock);
-    console.log(result);
-    expect(result.statusCode).toBe(400);
+    expect(() =>
+      lambda.validateParameters(eventMock.queryStringParameters)
+    ).toThrowError('summonerId, gameId, and region parameters are required.');
   });
+
   it('with empty parameter', async () => {
     eventMock.queryStringParameters = {
       gameId: '',
       summonerId: '',
       region: ''
     };
-    const result = await lambda.getOneMatchCard(eventMock);
-    console.log(result);
-    expect(result.statusCode).toBe(400);
+    expect(() =>
+      lambda.validateParameters(eventMock.queryStringParameters)
+    ).toThrowError('summonerId, gameId, and region parameters are required.');
   });
+
   it('with invalid gameId parameter', async () => {
     eventMock.queryStringParameters = {
       gameId: 'Invalid gameId',
       summonerId: 'blahblahblahblah',
       region: 'kr'
     };
-    const result = await lambda.getOneMatchCard(eventMock);
-    console.log(result);
-    expect(result.statusCode).toBe(400);
+    expect(() =>
+      lambda.validateParameters(eventMock.queryStringParameters)
+    ).toThrowError('gameId must be int.');
   });
-  it('normal request', async () => {
-    const regionMock = {
-      region: jest.fn(() => Promise.resolve(fakerMatch))
-    };
-    (kayn.Match.get as any).mockImplementation(() => regionMock);
+
+  it('with invalid region parameter', async () => {
     eventMock.queryStringParameters = {
-      gameId: fakerMatch.gameId!.toString(),
-      summonerId: faker.summonerId,
-      region: 'kr'
+      gameId: '4649',
+      summonerId: 'blahblahblahblah',
+      region: 'My Home'
     };
-    const result = await lambda.getOneMatchCard(eventMock);
-    // console.log(result);
-    expect(result.statusCode).toBe(200);
+    expect(() => {
+      lambda.validateParameters(eventMock.queryStringParameters);
+    }).toThrowError('regin must be valid value.');
   });
-  it('getPlayerDTO return success', async () => {
-    const player = lambda.getPlayerDTO(
-      fakerMatch,
-      fakerMatch.gameId!,
-      faker.summonerId
-    );
-    expect(player.participantId).toBe(faker.participantId);
+
+  it('normal request', async () => {
+    const params = {
+      gameId: fakerMatch.gameId,
+      summonerId: faker.body.params.summonerId,
+      region: Regions.KOREA
+    };
+    RiotApiTwisted.prototype.getRiotMatch = jest
+      .fn()
+      .mockResolvedValue(fakerMatch);
+    const api = new RiotApiTwisted();
+    const ddragon = new DDragon();
+    const service = new GetOneMatchCardService(api, ddragon);
+    const response = await service.startService(params);
+    expect(response.body.message.player.kp).toBe(faker.body.message.player.kp);
   });
 });
