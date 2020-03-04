@@ -9,9 +9,16 @@ export class Logger {
       transports: new winston.transports.Console(),
       format: winston.format.combine(
         winston.format.errors({ stack: true }),
-        winston.format.json(),
-        winston.format.prettyPrint()
+        winston.format.json()
       )
     });
+
+    if (process.env.NODE_ENV !== 'production') {
+      this.logger.add(
+        new winston.transports.Console({
+          format: winston.format.prettyPrint()
+        })
+      );
+    }
   }
 }

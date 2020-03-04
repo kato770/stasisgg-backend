@@ -1,3 +1,5 @@
+org: rengkong
+app: stasisgg-backend
 service:
   name: stasisgg-backend
 
