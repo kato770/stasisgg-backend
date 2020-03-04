@@ -38,7 +38,6 @@ functions:
           path: get-one-match-card
           cors: true
     layers:
-      - { Ref: AxiosLambdaLayer }
       - { Ref: TwistedLambdaLayer }
 
   get-player-profile:
@@ -60,5 +59,4 @@ functions:
           path: get-matches
           cors: true
     layers:
-      - { Ref: AxiosLambdaLayer }
       - { Ref: TwistedLambdaLayer }
