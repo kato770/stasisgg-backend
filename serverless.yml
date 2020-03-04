@@ -40,6 +40,7 @@ functions:
           path: get-one-match-card
           cors: true
     layers:
+      - { Ref: AxiosLambdaLayer }
       - { Ref: TwistedLambdaLayer }
 
   get-player-profile:
