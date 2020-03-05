@@ -12,6 +12,7 @@ import {
 } from '../helper/error';
 import { DDragon } from '../helper/ddragon';
 
+// service
 export class GetPlayerProfileService {
   private api: RiotApi;
   private logger: winston.Logger | undefined;
