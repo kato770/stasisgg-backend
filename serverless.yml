@@ -44,7 +44,7 @@ functions:
       - { Ref: TwistedLambdaLayer }
 
   get-player-profile:
-    handler: src/get-player-profile/getPlayerProfile.getPlayerProfile
+    handler: src/get-player-profile/getPlayerProfileHandler.getPlayerProfileHandler
     events:
       - http:
           method: get
@@ -52,7 +52,7 @@ functions:
           cors: true
     layers:
       - { Ref: AxiosLambdaLayer }
-      - { Ref: KaynLambdaLayer }
+      - { Ref: TwistedLambdaLayer }
 
   get-matches:
     handler: src/get-matches/getMatchesHandler.getMatchesHandler
